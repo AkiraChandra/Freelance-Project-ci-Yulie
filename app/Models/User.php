@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
+        'status',
     ];
 
     /**
@@ -43,4 +45,20 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the role associated with the user
+     */
+    public function roleModel()
+    {
+        return $this->belongsTo(\Spatie\Permission\Models\Role::class, 'role_id');
+    }
+
+    /**
+     * Get role name
+     */
+    public function getRoleNameAttribute()
+    {
+        return $this->roleModel?->name ?? 'No Role';
+    }
 }
