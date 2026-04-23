@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterVendorController;
 use Illuminate\Support\Facades\Route;
@@ -51,7 +52,7 @@ Route::middleware(['auth', 'role:owner', 'check.user.status'])->group(function (
 });
 
 // Company Management Routes - For Staff roles
-Route::middleware(['auth', 'role:staff-accounting,staff,manager', 'check.user.status'])->group(function () {
+Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.status'])->group(function () {
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
     Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
     Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
@@ -60,15 +61,34 @@ Route::middleware(['auth', 'role:staff-accounting,staff,manager', 'check.user.st
     Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
 });
 
+// Customer Management Routes - For Staff roles
+Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.status'])->group(function () {
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/customers/create', [CustomerController::class, 'create'])->name('customers.create');
+    Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
+    Route::get('/customers/{customer}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::patch('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+});
+
 // Order Routes - For Staff roles
-Route::middleware(['auth', 'role:staff-accounting,staff,manager', 'check.user.status'])->group(function () {
+Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.status'])->group(function () {
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'selectType'])->name('orders.select-type');
-    
-    Route::get('/orders/import', [OrderController::class, 'createImport'])->name('import-orders.create');
+
+    // Import
+    Route::get('/orders/import/create', [OrderController::class, 'createImport'])->name('import-orders.create');
     Route::post('/orders/import', [OrderController::class, 'storeImport'])->name('import-orders.store');
-    
-    Route::get('/orders/export', [OrderController::class, 'createExport'])->name('export-orders.create');
+    Route::get('/orders/import/{importOrder}/edit', [OrderController::class, 'editImport'])->name('import-orders.edit');
+    Route::patch('/orders/import/{importOrder}', [OrderController::class, 'updateImport'])->name('import-orders.update');
+    Route::delete('/orders/import/{importOrder}', [OrderController::class, 'destroyImport'])->name('import-orders.destroy');
+
+    // Export
+    Route::get('/orders/export/create', [OrderController::class, 'createExport'])->name('export-orders.create');
     Route::post('/orders/export', [OrderController::class, 'storeExport'])->name('export-orders.store');
+    Route::get('/orders/export/{exportOrder}/edit', [OrderController::class, 'editExport'])->name('export-orders.edit');
+    Route::patch('/orders/export/{exportOrder}', [OrderController::class, 'updateExport'])->name('export-orders.update');
+    Route::delete('/orders/export/{exportOrder}', [OrderController::class, 'destroyExport'])->name('export-orders.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -31,7 +31,7 @@
                 color: #000000 !important;
             }
         </style>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ search: '' }">
             <!-- Alert Messages -->
             @if ($errors->any())
                 <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md">
@@ -59,12 +59,21 @@
                     <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Daftar Vendor</h1>
                     <p class="text-gray-600 dark:text-gray-400">Kelola vendor trucking dan tarif pengiriman dengan mudah</p>
                 </div>
-                <button onclick="toggleFormSection()" class="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah Vendor Baru
-                </button>
+                    <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+                            </svg>
+                            <input type="text" x-model="search" placeholder="Cari vendor..."
+                                class="pl-9 pr-4 py-2.5 border-2 border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all w-full sm:w-52">
+                        </div>
+                        <button onclick="toggleFormSection()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Tambah Vendor Baru
+                        </button>
+                    </div>
             </div>
 
             <!-- Vendor List Card -->
@@ -87,7 +96,8 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 @foreach ($vendors as $vendor)
-                                    <tr class="hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors duration-150">
+                                    <tr class="hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors duration-150"
+                                        x-show="search === '' || '{{ strtolower($vendor->name) }}'.includes(search.toLowerCase())">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
                                                 <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-md">

@@ -10,9 +10,9 @@ class ImportOrder extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_number',
+        'customer_id',
+        'import_order_number',
         'order_date',
-        'company_id',
         'bl_number',
         'product_name',
         'shipping_line',
@@ -42,18 +42,18 @@ class ImportOrder extends Model
         'container_return_date' => 'date',
     ];
 
-    public function order()
+    public function customer()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(\App\Models\Customer::class);
     }
 
-    public function company()
+    public function order()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(\App\Models\Order::class);
     }
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
 }
