@@ -29,6 +29,28 @@
                             </svg>
                             Vendor
                         </a>
+                        <a href="{{ route('operational-staff.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('operational-staff.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M15 11a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            Staff Operasional
+                        </a>
+                        <a href="{{ route('owner-assignments.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('owner-assignments.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Review Penugasan
+                            @php $pendingCount = \App\Models\OperationalStaffAssignment::where('status', 1)->count(); @endphp
+                            @if ($pendingCount > 0)
+                                <span class="ml-1.5 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{{ $pendingCount }}</span>
+                            @endif
+                        </a>
+                        <a href="{{ route('orders.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('orders.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Order
+                        </a>
                     @endrole
 
                     @hasanyrole('staff-accounting|staff|manager')
@@ -43,6 +65,24 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             Order
+                        </a>
+                    @endhasanyrole
+
+                    @role('staff-accounting')
+                        <a href="{{ route('staff-assignments.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('staff-assignments.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Gaji Staff
+                        </a>
+                    @endrole
+
+                    @hasanyrole('owner|staff-accounting')
+                        <a href="{{ route('invoices.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('invoices.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Invoice
                         </a>
                     @endhasanyrole
                 </div>
@@ -106,6 +146,15 @@
                 <x-responsive-nav-link :href="route('vendor.register')" :active="request()->routeIs('vendor.*')">
                     {{ __('Vendor') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('operational-staff.index')" :active="request()->routeIs('operational-staff.*')">
+                    {{ __('Staff Operasional') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('owner-assignments.index')" :active="request()->routeIs('owner-assignments.*')">
+                    {{ __('Review Penugasan') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+                    {{ __('Order') }}
+                </x-responsive-nav-link>
             @endrole
             @hasanyrole('staff-accounting|staff|manager')
                 <x-responsive-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
@@ -113,6 +162,16 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*') || request()->routeIs('import-orders.*') || request()->routeIs('export-orders.*')">
                     {{ __('Order') }}
+                </x-responsive-nav-link>
+            @endhasanyrole
+            @role('staff-accounting')
+                <x-responsive-nav-link :href="route('staff-assignments.index')" :active="request()->routeIs('staff-assignments.*')">
+                    {{ __('Gaji Staff') }}
+                </x-responsive-nav-link>
+            @endrole
+            @hasanyrole('owner|staff-accounting')
+                <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
+                    {{ __('Invoice') }}
                 </x-responsive-nav-link>
             @endhasanyrole
         </div>

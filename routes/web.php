@@ -6,6 +6,9 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterVendorController;
+use App\Http\Controllers\OperationalStaffController;
+use App\Http\Controllers\OperationalStaffAssignmentController;
+use App\Http\Controllers\OwnerAssignmentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,6 +52,18 @@ Route::middleware(['auth', 'role:owner', 'check.user.status'])->group(function (
     Route::patch('/vendors/{vendor}', [RegisterVendorController::class, 'update'])->name('vendor.update');
     Route::delete('/vendors/{vendor}', [RegisterVendorController::class, 'destroy'])->name('vendor.destroy');
     Route::delete('/vendor-prices/{vendorPrice}', [RegisterVendorController::class, 'destroyPrice'])->name('vendor-price.destroy');
+
+    // Operational Staff Management Routes - Owner only
+    Route::get('/operational-staff', [OperationalStaffController::class, 'index'])->name('operational-staff.index');
+    Route::post('/operational-staff', [OperationalStaffController::class, 'store'])->name('operational-staff.store');
+    Route::patch('/operational-staff/{operationalStaff}', [OperationalStaffController::class, 'update'])->name('operational-staff.update');
+    Route::delete('/operational-staff/{operationalStaff}', [OperationalStaffController::class, 'destroy'])->name('operational-staff.destroy');
+
+    // Owner: review staff assignment requests
+    Route::get('/owner-assignments', [OwnerAssignmentController::class, 'index'])->name('owner-assignments.index');
+    Route::get('/owner-assignments/history', [OwnerAssignmentController::class, 'history'])->name('owner-assignments.history');
+    Route::post('/owner-assignments/{assignment}/approve', [OwnerAssignmentController::class, 'approve'])->name('owner-assignments.approve');
+    Route::post('/owner-assignments/{assignment}/decline', [OwnerAssignmentController::class, 'decline'])->name('owner-assignments.decline');
 });
 
 // Company Management Routes - For Staff roles
@@ -71,9 +86,13 @@ Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.st
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 });
 
-// Order Routes - For Staff roles
-Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.status'])->group(function () {
+// Order Routes - View only (owner, accounting, staff, manager)
+Route::middleware(['auth', 'role:owner|staff-accounting|staff|manager', 'check.user.status'])->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+});
+
+// Order Routes - Create/Edit/Delete (staff and manager only, NOT accounting)
+Route::middleware(['auth', 'role:staff|manager', 'check.user.status'])->group(function () {
     Route::get('/orders/create', [OrderController::class, 'selectType'])->name('orders.select-type');
 
     // Import
@@ -89,6 +108,28 @@ Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.st
     Route::get('/orders/export/{exportOrder}/edit', [OrderController::class, 'editExport'])->name('export-orders.edit');
     Route::patch('/orders/export/{exportOrder}', [OrderController::class, 'updateExport'])->name('export-orders.update');
     Route::delete('/orders/export/{exportOrder}', [OrderController::class, 'destroyExport'])->name('export-orders.destroy');
+});
+
+// Staff Assignment Routes - Accounting only
+Route::middleware(['auth', 'role:staff-accounting', 'check.user.status'])->group(function () {
+    Route::get('/staff-assignments', [OperationalStaffAssignmentController::class, 'index'])->name('staff-assignments.index');
+    Route::get('/staff-assignments/create', [OperationalStaffAssignmentController::class, 'create'])->name('staff-assignments.create');
+    Route::post('/staff-assignments', [OperationalStaffAssignmentController::class, 'store'])->name('staff-assignments.store');
+    Route::delete('/staff-assignments/{staffAssignment}', [OperationalStaffAssignmentController::class, 'destroy'])->name('staff-assignments.destroy');
+});
+
+// Invoice Routes - Owner and Accounting
+Route::middleware(['auth', 'role:owner|staff-accounting', 'check.user.status'])->group(function () {
+    Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create'])->name('invoices.create');
+    Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/edit', [\App\Http\Controllers\InvoiceController::class, 'edit'])->name('invoices.edit');
+    Route::patch('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'update'])->name('invoices.update');
+    Route::delete('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'destroy'])->name('invoices.destroy');
+    Route::get('/invoices/{invoice}/pdf', [\App\Http\Controllers\InvoiceController::class, 'generatePdf'])->name('invoices.pdf');
+    Route::get('/invoices/{invoice}/revision', [\App\Http\Controllers\InvoiceController::class, 'createRevision'])->name('invoices.revision');
+    Route::post('/invoices/{invoice}/revision', [\App\Http\Controllers\InvoiceController::class, 'storeRevision'])->name('invoices.revision.store');
 });
 
 require __DIR__.'/auth.php';

@@ -22,6 +22,7 @@
                         <h1 class="text-2xl font-bold text-gray-900">Order</h1>
                         <p class="text-gray-500 text-sm mt-1">Kelola semua order impor dan ekspor</p>
                     </div>
+                    @hasanyrole('staff|manager')
                     <a href="{{ route('orders.select-type') }}"
                         class="inline-flex items-center px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow transition-colors">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,22 +30,53 @@
                         </svg>
                         Buat Order Baru
                     </a>
+                    @endhasanyrole
                 </div>
             </div>
 
-            <!-- Tabs -->
-            <div x-data="{ tab: 'impor' }">
-                <div class="flex gap-2 mb-4">
-                    <button @click="tab = 'impor'"
-                        :class="tab === 'impor' ? 'bg-purple-600 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
-                        class="px-5 py-2 rounded-xl font-semibold text-sm transition-all">
-                        Impor ({{ $importOrders->count() }})
-                    </button>
-                    <button @click="tab = 'ekspor'"
-                        :class="tab === 'ekspor' ? 'bg-purple-600 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
-                        class="px-5 py-2 rounded-xl font-semibold text-sm transition-all">
-                        Ekspor ({{ $exportOrders->count() }})
-                    </button>
+            <!-- Tabs + Filter -->
+            <div x-data="{
+                tab: 'impor',
+                showCompleted: false,
+                showCancelled: false,
+                matchStatus(status) {
+                    if (status === 'on going') return true;
+                    if (status === 'completed' && this.showCompleted) return true;
+                    if (status === 'cancelled' && this.showCancelled) return true;
+                    return false;
+                }
+            }">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+                    <div class="flex gap-2">
+                        <button @click="tab = 'impor'"
+                            :class="tab === 'impor' ? 'bg-purple-600 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+                            class="px-5 py-2 rounded-xl font-semibold text-sm transition-all">
+                            Impor ({{ $importOrders->count() }})
+                        </button>
+                        <button @click="tab = 'ekspor'"
+                            :class="tab === 'ekspor' ? 'bg-purple-600 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+                            class="px-5 py-2 rounded-xl font-semibold text-sm transition-all">
+                            Ekspor ({{ $exportOrders->count() }})
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-4 ml-0 sm:ml-4 bg-white border border-gray-200 rounded-xl px-4 py-2">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Tampilkan:</span>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-sm">
+                            <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                            <span class="text-gray-600 font-medium">On Going</span>
+                            <span class="text-xs text-gray-400">(default)</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-sm select-none">
+                            <input type="checkbox" x-model="showCompleted" class="w-4 h-4 rounded accent-green-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span class="text-gray-700 font-medium">Completed</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-sm select-none">
+                            <input type="checkbox" x-model="showCancelled" class="w-4 h-4 rounded accent-red-500">
+                            <span class="w-2 h-2 bg-red-400 rounded-full"></span>
+                            <span class="text-gray-700 font-medium">Cancelled</span>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- IMPOR TABLE -->
@@ -65,14 +97,16 @@
                                         <th class="px-4 py-3 font-semibold text-gray-600">Nama Barang</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Party</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
+                                        @hasanyrole('staff|manager')
                                         <th class="px-4 py-3 font-semibold text-gray-600 text-center">Aksi</th>
+                                        @endhasanyrole
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
                                     @foreach ($importOrders as $order)
-                                        <tr class="hover:bg-gray-50 transition-colors">
+                                        <tr class="hover:bg-gray-50 transition-colors"
+                                            x-show="matchStatus('{{ $order->status }}')">
                                             <td class="px-4 py-3">
-                                                <span class="font-mono font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded text-xs">
                                                     {{ $order->import_order_number }}
                                                 </span>
                                             </td>
@@ -92,6 +126,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-4 py-3 text-center">
+                                                @hasanyrole('staff|manager')
                                                 <div class="flex items-center justify-center gap-2">
                                                     <a href="{{ route('import-orders.edit', $order) }}"
                                                         class="inline-flex items-center px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-lg text-xs transition-colors">
@@ -106,6 +141,7 @@
                                                         </button>
                                                     </form>
                                                 </div>
+                                                @endhasanyrole
                                             </td>
                                         </tr>
                                     @endforeach
@@ -133,14 +169,16 @@
                                         <th class="px-4 py-3 font-semibold text-gray-600">Nama Barang</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Party</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
+                                        @hasanyrole('staff|manager')
                                         <th class="px-4 py-3 font-semibold text-gray-600 text-center">Aksi</th>
+                                        @endhasanyrole
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
                                     @foreach ($exportOrders as $order)
-                                        <tr class="hover:bg-gray-50 transition-colors">
+                                        <tr class="hover:bg-gray-50 transition-colors"
+                                            x-show="matchStatus('{{ $order->status }}')">
                                             <td class="px-4 py-3">
-                                                <span class="font-mono font-bold text-orange-700 bg-orange-50 px-2 py-1 rounded text-xs">
                                                     {{ $order->export_order_number }}
                                                 </span>
                                             </td>
@@ -160,6 +198,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-4 py-3 text-center">
+                                                @hasanyrole('staff|manager')
                                                 <div class="flex items-center justify-center gap-2">
                                                     <a href="{{ route('export-orders.edit', $order) }}"
                                                         class="inline-flex items-center px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-lg text-xs transition-colors">
@@ -174,6 +213,7 @@
                                                         </button>
                                                     </form>
                                                 </div>
+                                                @endhasanyrole
                                             </td>
                                         </tr>
                                     @endforeach

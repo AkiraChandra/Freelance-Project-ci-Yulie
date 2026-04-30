@@ -67,6 +67,33 @@
                     <p class="text-sm text-gray-600">Vendor trucking terdaftar</p>
                     <a href="{{ route('vendor.register') }}" class="inline-block mt-4 text-orange-600 hover:text-orange-700 font-medium text-sm">Kelola Vendor →</a>
                 </div>
+
+                <!-- Operational Staff -->
+                <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">👷 Staff Operasional</h3>
+                        <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-semibold">
+                            {{ \App\Models\OperationalStaff::where('status', 'active')->count() }}
+                        </span>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2">{{ \App\Models\OperationalStaff::where('status', 'active')->count() }}</div>
+                    <p class="text-sm text-gray-600">Pekerja lapangan aktif</p>
+                    <a href="{{ route('operational-staff.index') }}" class="inline-block mt-4 text-teal-600 hover:text-teal-700 font-medium text-sm">Kelola Staff →</a>
+                </div>
+
+                <!-- Pending Assignments -->
+                @php $pendingAssignments = \App\Models\OperationalStaffAssignment::where('status', 1)->count(); @endphp
+                <div class="bg-white rounded-lg shadow-sm border {{ $pendingAssignments > 0 ? 'border-yellow-300' : 'border-slate-200' }} p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">⏳ Perlu Review</h3>
+                        <span class="{{ $pendingAssignments > 0 ? 'bg-yellow-100 text-yellow-800 animate-pulse' : 'bg-gray-100 text-gray-600' }} px-3 py-1 rounded-full text-sm font-semibold">
+                            {{ $pendingAssignments }}
+                        </span>
+                    </div>
+                    <div class="text-3xl font-bold {{ $pendingAssignments > 0 ? 'text-yellow-600' : 'text-gray-900' }} mb-2">{{ $pendingAssignments }}</div>
+                    <p class="text-sm text-gray-600">Penugasan menunggu persetujuan</p>
+                    <a href="{{ route('owner-assignments.index') }}" class="inline-block mt-4 text-yellow-600 hover:text-yellow-700 font-medium text-sm">Review Sekarang →</a>
+                </div>
             </div>
 
             <!-- Quick Actions -->
@@ -84,6 +111,18 @@
                         <a href="{{ route('companies.index') }}" class="bg-white/20 text-white font-semibold py-2 px-6 rounded-lg hover:bg-white/30 transition-colors border border-white/30">
                             🏢 Data Perusahaan
                         </a>
+                        <a href="{{ route('operational-staff.index') }}" class="bg-white/20 text-white font-semibold py-2 px-6 rounded-lg hover:bg-white/30 transition-colors border border-white/30">
+                            👷 Staff Operasional
+                        </a>
+                        <a href="{{ route('owner-assignments.index') }}" class="bg-white/20 text-white font-semibold py-2 px-6 rounded-lg hover:bg-white/30 transition-colors border border-white/30 flex items-center gap-2">
+                            ✅ Review Penugasan
+                            @if ($pendingAssignments > 0)
+                                <span class="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{{ $pendingAssignments }}</span>
+                            @endif
+                        </a>
+                        <a href="{{ route('orders.index') }}" class="bg-white/20 text-white font-semibold py-2 px-6 rounded-lg hover:bg-white/30 transition-colors border border-white/30">
+                            📋 Lihat Order
+                        </a>
                     </div>
                 </div>
             </div>
@@ -91,6 +130,7 @@
 
         @role('staff-accounting|staff|manager')
             <!-- Staff Dashboard -->
+            @hasanyrole('staff|manager')
             <div class="mb-8">
                 <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Buat Order Baru</h2>
@@ -109,6 +149,7 @@
                     </div>
                 </div>
             </div>
+            @endhasanyrole
 
             <!-- Quick Links -->
             <div class="mb-8">
@@ -118,6 +159,14 @@
                         <a href="{{ route('companies.index') }}" class="bg-purple-100 text-purple-700 font-semibold py-2 px-4 rounded-lg hover:bg-purple-200 transition-colors">
                             📋 Data Perusahaan
                         </a>
+                        @role('staff-accounting')
+                        <a href="{{ route('staff-assignments.index') }}" class="bg-teal-100 text-teal-700 font-semibold py-2 px-4 rounded-lg hover:bg-teal-200 transition-colors">
+                            💰 Penugasan & Gaji Staff
+                        </a>
+                        <a href="{{ route('staff-assignments.create') }}" class="bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition-colors">
+                            ➕ Tambah Penugasan
+                        </a>
+                        @endrole
                         <a href="{{ route('profile.edit') }}" class="bg-gray-100 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
                             ⚙️ Edit Profil
                         </a>
