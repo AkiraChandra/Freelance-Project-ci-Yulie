@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ search: '', showHistory: false }">
 
             {{-- Alert Messages --}}
@@ -27,21 +27,22 @@
             @endif
 
             {{-- Header --}}
-            <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div class="mb-8 bg-gradient-to-r from-slate-800 to-teal-800 rounded-2xl shadow-lg p-6 border border-white/10">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">Daftar Penugasan Staff</h1>
-                    <p class="text-gray-600">Kelola assignment dan biaya staff operasional per orderan</p>
+                    <h1 class="text-4xl font-bold text-white mb-2">Daftar Penugasan Staff</h1>
+                    <p class="text-slate-300">Kelola assignment dan biaya staff operasional per orderan</p>
                 </div>
                 <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                     <div class="relative">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                         </svg>
                         <input type="text" x-model="search" placeholder="Cari staff/order..."
-                            class="pl-9 pr-4 py-2.5 border-2 border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all w-full sm:w-52">
+                            class="pl-9 pr-4 py-2.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-slate-400 text-sm focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all w-full sm:w-52">
                     </div>
                     <button @click="showHistory = !showHistory"
-                        :class="showHistory ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300'"
+                        :class="showHistory ? 'bg-teal-500 hover:bg-teal-400 text-white' : 'bg-white/15 hover:bg-white/25 text-white border border-white/20'"
                         class="inline-flex items-center px-4 py-2.5 font-semibold rounded-lg transition-all duration-200 text-sm">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -49,12 +50,13 @@
                         <span x-text="showHistory ? 'Sembunyikan History' : 'Tampilkan History'"></span>
                     </button>
                     <a href="{{ route('staff-assignments.create') }}"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-lg shadow-lg transition-all duration-200">
+                        class="inline-flex items-center px-6 py-3 bg-white/15 hover:bg-white/25 text-white font-bold rounded-lg border border-white/20 backdrop-blur-sm transition-all duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         Tambah Penugasan
                     </a>
+                </div>
                 </div>
             </div>
 
@@ -66,56 +68,56 @@
             @endphp
             {{-- Default (pending only) --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8" x-show="!showHistory">
-                <div class="bg-white rounded-xl border border-yellow-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-yellow-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Menunggu Persetujuan</p>
                     <p class="text-3xl font-bold text-yellow-600 mt-1">{{ $pending->count() }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Total Biaya Pending</p>
                     <p class="text-3xl font-bold text-gray-800 mt-1">Rp {{ number_format($pending->sum('fee'), 0, ',', '.') }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Staff Terlibat</p>
-                    <p class="text-3xl font-bold text-indigo-700 mt-1">{{ $pending->pluck('operational_staff_id')->unique()->count() }}</p>
+                    <p class="text-3xl font-bold text-teal-700 mt-1">{{ $pending->pluck('operational_staff_id')->unique()->count() }}</p>
                 </div>
             </div>
             {{-- History (all) --}}
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8" x-show="showHistory" x-cloak>
-                <div class="bg-white rounded-xl border border-yellow-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-yellow-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Pending</p>
                     <p class="text-3xl font-bold text-yellow-600 mt-1">{{ $pending->count() }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-green-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-green-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Disetujui</p>
                     <p class="text-3xl font-bold text-green-700 mt-1">{{ $accepted->count() }}</p>
                     <p class="text-xs text-gray-500 mt-1">Rp {{ number_format($accepted->sum('fee'), 0, ',', '.') }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-red-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Ditolak</p>
                     <p class="text-3xl font-bold text-red-600 mt-1">{{ $declined->count() }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Total Semua</p>
                     <p class="text-3xl font-bold text-gray-900 mt-1">{{ $assignments->count() }}</p>
                 </div>
             </div>
 
             {{-- Assignments Table --}}
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+            <div class="bg-slate-50 rounded-2xl shadow-xl overflow-hidden border border-slate-200">
                 @if ($assignments->count() > 0)
-                    <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200 flex items-center justify-between">
+                    <div class="px-6 py-4 bg-gradient-to-r from-slate-100 to-slate-50 border-b-2 border-slate-200 flex items-center justify-between">
                         <h3 class="text-lg font-bold text-gray-900">
                             <span x-show="!showHistory">{{ $pending->count() }} Penugasan Pending</span>
                             <span x-show="showHistory" x-cloak>{{ $assignments->count() }} Semua Penugasan</span>
                         </h3>
-                        <span x-show="showHistory" x-cloak class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-3 py-1 rounded-full">
+                        <span x-show="showHistory" x-cloak class="text-xs text-teal-600 font-semibold bg-teal-50 px-3 py-1 rounded-full">
                             Menampilkan semua termasuk history
                         </span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b-2 border-gray-200">
+                                <tr class="border-b-2 border-slate-200">
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Staff Operasional</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Tipe Order</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">No. Order</th>
@@ -135,14 +137,14 @@
                                             : '(order tidak ditemukan)';
                                         $staffName = strtolower($assignment->operationalStaff->name ?? '');
                                     @endphp
-                                    <tr class="hover:bg-green-50 transition-colors duration-150"
+                                    <tr class="hover:bg-teal-50/50 transition-colors duration-150"
                                         x-show="
                                             (showHistory || {{ $assignment->status === \App\Models\OperationalStaffAssignment::STATUS_REQUEST ? 'true' : 'false' }}) &&
                                             (search === '' || '{{ $staffName }}'.includes(search.toLowerCase()) || '{{ strtolower($orderNumber) }}'.includes(search.toLowerCase()))
                                         ">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3 shadow">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-slate-700 to-teal-600 rounded-full flex items-center justify-center text-white font-bold mr-3 shadow">
                                                     {{ strtoupper(substr($assignment->operationalStaff->name ?? '?', 0, 1)) }}
                                                 </div>
                                                 <div>

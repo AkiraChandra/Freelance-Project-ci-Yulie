@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ search: '', showForm: false, editId: null, editName: '', editContact: '', editStatus: '' }">
 
             {{-- Alert Messages --}}
@@ -30,31 +30,33 @@
             @endif
 
             {{-- Header --}}
-            <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div class="mb-8 bg-gradient-to-r from-slate-800 to-teal-800 rounded-2xl shadow-lg p-6 border border-white/10">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">Daftar Staff Operasional</h1>
-                    <p class="text-gray-600">Kelola data pekerja lapangan (orang lapangan)</p>
+                    <h1 class="text-4xl font-bold text-white mb-2">Daftar Staff Operasional</h1>
+                    <p class="text-slate-300">Kelola data pekerja lapangan (orang lapangan)</p>
                 </div>
                 <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                     <div class="relative">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                         </svg>
                         <input type="text" x-model="search" placeholder="Cari staff..."
-                            class="pl-9 pr-4 py-2.5 border-2 border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all w-full sm:w-52">
+                            class="pl-9 pr-4 py-2.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-slate-400 text-sm focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all w-full sm:w-52">
                     </div>
                     <button @click="showForm = !showForm; editId = null"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-lg shadow-lg transition-all duration-200">
+                        class="inline-flex items-center px-6 py-3 bg-white/15 hover:bg-white/25 text-white font-bold rounded-lg border border-white/20 backdrop-blur-sm transition-all duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         Tambah Staff Baru
                     </button>
                 </div>
+                </div>
             </div>
 
             {{-- Add / Edit Form --}}
-            <div x-show="showForm" x-transition class="mb-8 bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+            <div x-show="showForm" x-transition class="mb-8 bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4" x-text="editId ? '✏️ Edit Staff Operasional' : '➕ Tambah Staff Operasional Baru'"></h3>
 
                 {{-- Add Form --}}
@@ -64,23 +66,23 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Staff <span class="text-red-500">*</span></label>
                             <input type="text" name="name" value="{{ old('name') }}" placeholder="Nama lengkap"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Kontak <span class="text-gray-400 font-normal">(opsional)</span></label>
                             <input type="text" name="contact" value="{{ old('contact') }}" placeholder="Contoh: 08123456789"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Status <span class="text-red-500">*</span></label>
-                            <select name="status" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                            <select name="status" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                                 <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Aktif</option>
                                 <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                             </select>
                         </div>
                     </div>
                     <div class="mt-4 flex gap-3">
-                        <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+                        <button type="submit" class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors">
                             Simpan
                         </button>
                         <button type="button" @click="showForm = false" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors">
@@ -99,16 +101,16 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Staff <span class="text-red-500">*</span></label>
                                 <input type="text" name="name" x-model="editName" placeholder="Nama lengkap"
-                                    class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                    class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Kontak <span class="text-gray-400 font-normal">(opsional)</span></label>
                                 <input type="text" name="contact" x-model="editContact" placeholder="Contoh: 08123456789"
-                                    class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                    class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Status <span class="text-red-500">*</span></label>
-                                <select name="status" x-model="editStatus" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                <select name="status" x-model="editStatus" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                                     <option value="active">Aktif</option>
                                     <option value="inactive">Tidak Aktif</option>
                                 </select>
@@ -127,15 +129,15 @@
             </div>
 
             {{-- Staff Table --}}
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+            <div class="bg-slate-50 rounded-2xl shadow-xl overflow-hidden border border-slate-200">
                 @if ($staffs->count() > 0)
-                    <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                    <div class="px-6 py-4 bg-gradient-to-r from-slate-100 to-slate-50 border-b-2 border-slate-200">
                         <h3 class="text-lg font-bold text-gray-900">{{ $staffs->count() }} Staff Terdaftar</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b-2 border-gray-200">
+                                <tr class="border-b-2 border-slate-200">
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Staff</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Nomor Kontak</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Total Penugasan</th>
@@ -149,7 +151,7 @@
                                         x-show="search === '' || '{{ strtolower($staff->name) }}'.includes(search.toLowerCase()) || '{{ strtolower($staff->contact ?? '') }}'.includes(search.toLowerCase())">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
-                                                <div class="w-11 h-11 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-md">
+                                                <div class="w-11 h-11 bg-gradient-to-br from-slate-700 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-md">
                                                     {{ strtoupper(substr($staff->name, 0, 1)) }}
                                                 </div>
                                                 <div>
@@ -170,7 +172,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span class="inline-block bg-indigo-100 text-indigo-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                            <span class="inline-block bg-teal-100 text-teal-800 text-sm font-semibold px-3 py-1 rounded-full">
                                                 {{ $staff->assignments()->count() }} Order
                                             </span>
                                         </td>

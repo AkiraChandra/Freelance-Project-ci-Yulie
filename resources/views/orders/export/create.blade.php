@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">Buat Order Ekspor</h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8" x-data="{ party: '' }">
 
             <a href="{{ route('orders.select-type') }}"
@@ -29,7 +29,7 @@
                 @csrf
 
                 {{-- INFO UTAMA --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Informasi Utama</h3>
                     </div>
@@ -64,7 +64,7 @@
                 </div>
 
                 {{-- DATA PENGIRIMAN --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Data Pengiriman</h3>
                     </div>
@@ -139,7 +139,7 @@
                 </div>
 
                 {{-- CONTAINER --}}
-                <div x-show="party !== 'LCL'" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div x-show="party !== 'LCL'" class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Data Container & Tanggal</h3>
                         <p class="text-xs text-gray-500 mt-0.5">Tidak diperlukan jika party LCL</p>
@@ -193,7 +193,7 @@
                 </div>
 
                 {{-- STATUS & MASALAH --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Status & Catatan</h3>
                     </div>

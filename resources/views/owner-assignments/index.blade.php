@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen" x-data="{ search: '', declineId: null, declineFee: '', rejectionNotes: '' }">
+    <div class="py-8 min-h-screen" x-data="{ search: '', declineId: null, declineFee: '', rejectionNotes: '' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Alerts --}}
@@ -19,53 +19,55 @@
             @endif
 
             {{-- Header --}}
-            <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div class="mb-8 bg-gradient-to-r from-slate-800 to-teal-800 rounded-2xl shadow-lg p-6 border border-white/10">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">Review Penugasan</h1>
-                    <p class="text-gray-600">Setujui atau tolak request penugasan dari Staff Accounting</p>
+                    <h1 class="text-4xl font-bold text-white mb-2">Review Penugasan</h1>
+                    <p class="text-slate-300">Setujui atau tolak request penugasan dari Staff Accounting</p>
                 </div>
                 <div class="mt-4 sm:mt-0 flex gap-3">
                     <div class="relative">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                         </svg>
                         <input type="text" x-model="search" placeholder="Cari staff/order..."
-                            class="pl-9 pr-4 py-2.5 border-2 border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all w-full sm:w-52">
+                            class="pl-9 pr-4 py-2.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-slate-400 text-sm focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all w-full sm:w-52">
                     </div>
                     <a href="{{ route('owner-assignments.history') }}"
-                        class="inline-flex items-center px-5 py-2.5 bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors text-sm">
+                        class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg border border-white/20 backdrop-blur-sm transition-colors text-sm">
                         📋 Lihat History
                     </a>
+                </div>
                 </div>
             </div>
 
             {{-- Summary --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                <div class="bg-white rounded-xl border border-yellow-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-yellow-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Menunggu Review</p>
                     <p class="text-3xl font-bold text-yellow-600 mt-1">{{ $assignments->count() }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Total Biaya Pending</p>
                     <p class="text-3xl font-bold text-gray-800 mt-1">Rp {{ number_format($assignments->sum('fee'), 0, ',', '.') }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Staff Terlibat</p>
-                    <p class="text-3xl font-bold text-indigo-700 mt-1">{{ $assignments->pluck('operational_staff_id')->unique()->count() }}</p>
+                    <p class="text-3xl font-bold text-teal-700 mt-1">{{ $assignments->pluck('operational_staff_id')->unique()->count() }}</p>
                 </div>
             </div>
 
             {{-- Table --}}
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+            <div class="bg-slate-50 rounded-2xl shadow-xl overflow-hidden border border-slate-200">
                 @if ($assignments->count() > 0)
-                    <div class="px-6 py-4 bg-gradient-to-r from-yellow-50 to-amber-50 border-b-2 border-yellow-200 flex items-center gap-2">
+                    <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-yellow-50/80 border-b-2 border-yellow-200 flex items-center gap-2">
                         <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse"></span>
                         <h3 class="text-lg font-bold text-gray-900">{{ $assignments->count() }} Menunggu Persetujuan</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b-2 border-gray-200">
+                                <tr class="border-b-2 border-slate-200">
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Staff Operasional</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Tipe Order</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">No. Order</th>
@@ -87,7 +89,7 @@
                                         x-show="search === '' || '{{ strtolower($assignment->operationalStaff->name ?? '') }}'.includes(search.toLowerCase()) || '{{ strtolower($orderNumber) }}'.includes(search.toLowerCase()) || '{{ strtolower($assignment->assignedBy->name ?? '') }}'.includes(search.toLowerCase())">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3 shadow">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-slate-700 to-teal-600 rounded-full flex items-center justify-center text-white font-bold mr-3 shadow">
                                                     {{ strtoupper(substr($assignment->operationalStaff->name ?? '?', 0, 1)) }}
                                                 </div>
                                                 <div>
@@ -160,7 +162,7 @@
         <div x-show="declineId !== null" x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
             @keydown.escape.window="declineId = null">
-            <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4"
+            <div class="bg-slate-50 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4"
                 @click.stop>
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">

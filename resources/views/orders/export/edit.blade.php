@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">Edit Order Ekspor — {{ $exportOrder->export_order_number }}</h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         @php
             $tv_parts = array_map('trim', explode(',', $exportOrder->trucking_vendor ?? ''));
             $tv1_saved = old('trucking_vendor_1', $tv_parts[0] ?? '');
@@ -35,7 +35,7 @@
                 @method('PATCH')
 
                 {{-- INFO UTAMA --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Informasi Utama</h3>
                     </div>
@@ -70,7 +70,7 @@
                 </div>
 
                 {{-- DATA PENGIRIMAN --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Data Pengiriman</h3>
                     </div>
@@ -145,7 +145,7 @@
                 </div>
 
                 {{-- CONTAINER --}}
-                <div x-show="party !== 'LCL'" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div x-show="party !== 'LCL'" class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Data Container & Tanggal</h3>
                     </div>
@@ -197,7 +197,7 @@
                 </div>
 
                 {{-- STATUS & MASALAH --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Status & Catatan</h3>
                     </div>

@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">Buat Order Impor</h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8" x-data="{ party: '' }">
 
             <a href="{{ route('orders.select-type') }}"
@@ -29,8 +29,8 @@
                 @csrf
 
                 {{-- ── INFO UTAMA ─────────────────────────────────────────── --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Informasi Utama</h3>
                     </div>
                     <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -49,7 +49,7 @@
                             </label>
                             <input type="date" name="order_date" id="order_date"
                                 value="{{ old('order_date', now()->format('Y-m-d')) }}" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         {{-- Customer --}}
@@ -71,7 +71,7 @@
                 </div>
 
                 {{-- ── DATA KAPAL ──────────────────────────────────────────── --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Data Pengiriman</h3>
                     </div>
@@ -80,49 +80,49 @@
                         <div>
                             <label for="bl_number" class="block text-sm font-bold text-gray-700 mb-1">B/L No <span class="text-red-500">*</span></label>
                             <input type="text" name="bl_number" id="bl_number" value="{{ old('bl_number') }}" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="product_name" class="block text-sm font-bold text-gray-700 mb-1">Nama Barang <span class="text-red-500">*</span></label>
                             <input type="text" name="product_name" id="product_name" value="{{ old('product_name') }}" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="shipping_line" class="block text-sm font-bold text-gray-700 mb-1">Pelayaran <span class="text-red-500">*</span></label>
                             <input type="text" name="shipping_line" id="shipping_line" value="{{ old('shipping_line') }}" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="vessel_name" class="block text-sm font-bold text-gray-700 mb-1">Nama Kapal <span class="text-red-500">*</span></label>
                             <input type="text" name="vessel_name" id="vessel_name" value="{{ old('vessel_name') }}" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="voy_number" class="block text-sm font-bold text-gray-700 mb-1">Voy Kapal <span class="text-red-500">*</span></label>
                             <input type="text" name="voy_number" id="voy_number" value="{{ old('voy_number') }}" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="vessel_arrival_date" class="block text-sm font-bold text-gray-700 mb-1">Tgl Kapal Tiba <span class="text-red-500">*</span></label>
                             <input type="date" name="vessel_arrival_date" id="vessel_arrival_date" value="{{ old('vessel_arrival_date') }}" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="pib_number" class="block text-sm font-bold text-gray-700 mb-1">PIB Aju</label>
                             <input type="text" name="pib_number" id="pib_number" value="{{ old('pib_number') }}"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="party" class="block text-sm font-bold text-gray-700 mb-1">Party <span class="text-red-500">*</span></label>
                             <select name="party" id="party" x-model="party" required
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                                 <option value="">-- Pilih Party --</option>
                                 <option value="20'" {{ old('party') === "20'" ? 'selected' : '' }}>20'</option>
                                 <option value="40'" {{ old('party') === "40'" ? 'selected' : '' }}>40'</option>
@@ -134,19 +134,19 @@
                         <div>
                             <label for="port" class="block text-sm font-bold text-gray-700 mb-1">Pelabuhan / Gudang</label>
                             <input type="text" name="port" id="port" value="{{ old('port') }}"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="do_date" class="block text-sm font-bold text-gray-700 mb-1">Tgl DO</label>
                             <input type="date" name="do_date" id="do_date" value="{{ old('do_date') }}"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
                     </div>
                 </div>
 
                 {{-- ── CONTAINER (sembunyikan jika LCL) ───────────────────── --}}
-                <div x-show="party !== 'LCL'" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div x-show="party !== 'LCL'" class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Data Container</h3>
                         <p class="text-xs text-gray-500 mt-0.5">Tidak diperlukan jika party LCL</p>
@@ -157,25 +157,25 @@
                             <label for="container_number" class="block text-sm font-bold text-gray-700 mb-1">No Container</label>
                             <input type="text" name="container_number" id="container_number" value="{{ old('container_number') }}"
                                 placeholder="Isi sesuai jumlah party"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="demurrage_date" class="block text-sm font-bold text-gray-700 mb-1">Tgl Demurrage / Detention</label>
                             <input type="date" name="demurrage_date" id="demurrage_date" value="{{ old('demurrage_date') }}"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="release_date" class="block text-sm font-bold text-gray-700 mb-1">Tgl Pengeluaran dari Pelabuhan</label>
                             <input type="date" name="release_date" id="release_date" value="{{ old('release_date') }}"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         <div>
                             <label for="container_return_date" class="block text-sm font-bold text-gray-700 mb-1">Tgl Pengembalian Container dari Pabrik</label>
                             <input type="date" name="container_return_date" id="container_return_date" value="{{ old('container_return_date') }}"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
 
                         @php
@@ -206,15 +206,15 @@
                 </div>
 
                 {{-- ── STATUS & MASALAH ────────────────────────────────────── --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-b border-gray-200">
                         <h3 class="font-bold text-gray-900">Status & Catatan</h3>
                     </div>
                     <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                             <label for="status" class="block text-sm font-bold text-gray-700 mb-1">Status</label>
                             <select name="status" id="status"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm">
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                                 <option value="on going" {{ old('status', 'on going') === 'on going' ? 'selected' : '' }}>On Going</option>
                                 <option value="completed" {{ old('status') === 'completed' ? 'selected' : '' }}>Completed</option>
                                 <option value="cancelled" {{ old('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
@@ -223,7 +223,7 @@
                         <div class="sm:col-span-2">
                             <label for="issue" class="block text-sm font-bold text-gray-700 mb-1">Masalah (opsional)</label>
                             <textarea name="issue" id="issue" rows="3"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm"
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm"
                                 placeholder="Catatan masalah jika ada...">{{ old('issue') }}</textarea>
                         </div>
                     </div>
@@ -236,7 +236,7 @@
                         Batal
                     </a>
                     <button type="submit"
-                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow transition-colors">
+                        class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow transition-colors">
                         Simpan Order Impor
                     </button>
                 </div>

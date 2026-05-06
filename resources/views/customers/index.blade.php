@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ search: '' }">
 
             @if (session('success'))
@@ -18,14 +18,14 @@
             @endif
 
             <!-- Header Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="bg-gradient-to-r from-slate-800 to-teal-800 rounded-2xl shadow-lg p-6 mb-6 border border-white/10">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Customer</h1>
-                        <p class="text-gray-500 text-sm mt-1">Kelola daftar customer ekspor dan impor</p>
+                        <h1 class="text-2xl font-bold text-white">Customer</h1>
+                        <p class="text-slate-300 text-sm mt-1">Kelola daftar customer ekspor dan impor</p>
                     </div>
                     <a href="{{ route('customers.create') }}"
-                        class="inline-flex items-center px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow transition-colors">
+                        class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-colors">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
@@ -33,19 +33,19 @@
                     </a>
                 </div>
                 <!-- Search Bar -->
-                <div class="mt-4 pt-4 border-t border-gray-100">
+                <div class="mt-4 pt-4 border-t border-white/10">
                     <div class="relative max-w-sm">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                         </svg>
                         <input type="text" x-model="search" placeholder="Cari nama atau kode customer..."
-                            class="w-full pl-9 pr-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all">
+                            class="w-full pl-9 pr-4 py-2.5 border border-white/20 rounded-xl bg-white/10 text-white placeholder-slate-400 text-sm focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all">
                     </div>
                 </div>
             </div>
 
             <!-- Table Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                 @if ($customers->isEmpty())
                     <div class="text-center py-20 text-gray-400">
                         <svg class="w-14 h-14 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +57,7 @@
                 @else
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 border-b border-gray-200">
+                            <thead class="bg-slate-100 border-b border-slate-200">
                                 <tr>
                                     <th class="px-6 py-4 font-semibold text-gray-600">Kode</th>
                                     <th class="px-6 py-4 font-semibold text-gray-600">Nama Customer</th>
@@ -69,10 +69,10 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach ($customers as $customer)
-                                    <tr class="hover:bg-gray-50 transition-colors"
+                                    <tr class="hover:bg-teal-50/50 transition-colors"
                                         x-show="search === '' || '{{ strtolower($customer->customer_name) }}'.includes(search.toLowerCase()) || '{{ strtolower($customer->customer_code) }}'.includes(search.toLowerCase()) || '{{ strtolower($customer->type) }}'.includes(search.toLowerCase())">
                                         <td class="px-6 py-4">
-                                            <span class="font-mono font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg text-xs">
+                                            <span class="font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg text-xs">
                                                 {{ $customer->customer_code }}
                                             </span>
                                         </td>
@@ -93,7 +93,7 @@
                                         <td class="px-6 py-4 text-center">
                                             <div class="flex items-center justify-center gap-2">
                                                 <a href="{{ route('customers.edit', $customer) }}"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-lg text-xs transition-colors">
+                                                    class="inline-flex items-center px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium rounded-lg text-xs transition-colors">
                                                     <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                     </svg>

@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">Daftar Invoice</h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             @if (session('success'))
@@ -15,14 +15,14 @@
                 </div>
             @endif
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="bg-gradient-to-r from-slate-800 to-teal-800 rounded-2xl shadow-lg p-6 mb-6 border border-white/10">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Invoice</h1>
-                        <p class="text-gray-500 text-sm mt-1">Kelola dan cetak invoice per order</p>
+                        <h1 class="text-2xl font-bold text-white">Invoice</h1>
+                        <p class="text-slate-300 text-sm mt-1">Kelola dan cetak invoice per order</p>
                     </div>
                     <a href="{{ route('invoices.create') }}"
-                        class="inline-flex items-center px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow transition-colors">
+                        class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-colors">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
@@ -31,11 +31,11 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                 @if ($invoices->count() > 0)
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 border-b border-gray-200">
+                            <thead class="bg-slate-100 border-b border-slate-200">
                                 <tr>
                                     <th class="px-4 py-3 font-semibold text-gray-600">Nota No</th>
                                     <th class="px-4 py-3 font-semibold text-gray-600">Judul</th>
@@ -51,9 +51,9 @@
                                     @php
                                         $order = $invoice->order;
                                     @endphp
-                                    <tr class="hover:bg-gray-50 transition-colors">
+                                    <tr class="hover:bg-teal-50/50 transition-colors">
                                         <td class="px-4 py-3">
-                                            <span class="font-mono font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded text-xs">
+                                            <span class="font-mono font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded text-xs">
                                                 {{ $invoice->nota_number ?? '-' }}
                                             </span>
                                             @if ($invoice->revision > 0)
@@ -82,19 +82,19 @@
                                         <td class="px-4 py-3 text-center">
                                             <div class="flex items-center justify-center gap-2">
                                                 <a href="{{ route('invoices.show', $invoice) }}"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-medium rounded-lg text-xs transition-colors">
-                                                    👁️ Lihat
+                                                    class="inline-flex items-center px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium rounded-lg text-xs transition-colors">
+                                                    Lihat
                                                 </a>
                                                 <a href="{{ route('invoices.pdf', $invoice) }}" target="_blank"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 font-medium rounded-lg text-xs transition-colors">
-                                                    📄 PDF
+                                                    class="inline-flex items-center px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium rounded-lg text-xs transition-colors">
+                                                    PDF
                                                 </a>
                                                 <form action="{{ route('invoices.destroy', $invoice) }}" method="POST"
                                                     onsubmit="return confirm('Hapus invoice ini?')">
                                                     @csrf @method('DELETE')
                                                     <button type="submit"
                                                         class="inline-flex items-center px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 font-medium rounded-lg text-xs transition-colors">
-                                                        🗑️
+                                                        Hapus
                                                     </button>
                                                 </form>
                                             </div>
@@ -107,8 +107,8 @@
                 @else
                     <div class="text-center py-16 text-gray-400">
                         <div class="text-5xl mb-4">📄</div>
-                        <p class="text-lg font-semibold text-gray-500">Belum ada invoice</p>
-                        <a href="{{ route('invoices.create') }}" class="inline-block mt-4 text-purple-600 hover:underline text-sm font-medium">Buat Invoice Baru →</a>
+                        <p class="text-lg font-semibold text-slate-500">Belum ada invoice</p>
+                        <a href="{{ route('invoices.create') }}" class="inline-block mt-4 text-teal-600 hover:underline text-sm font-medium">Buat Invoice Baru →</a>
                     </div>
                 @endif
             </div>

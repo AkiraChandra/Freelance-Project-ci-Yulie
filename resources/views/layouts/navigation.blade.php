@@ -1,87 +1,62 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-slate-200 shadow-sm">
+<nav x-data="{ open: false }" class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">IW</span>
+                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2.5 group">
+                        <div class="w-9 h-9 bg-gradient-to-br from-slate-800 to-teal-700 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+                            <span class="text-white font-extrabold text-sm">SS</span>
                         </div>
-                        <span class="text-xl font-bold text-gray-900 hidden sm:inline">Internal</span>
+                        <div class="hidden sm:block">
+                            <span class="text-base font-extrabold text-slate-800 leading-none">Suryasumatera</span>
+                        </div>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex">
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('dashboard') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                        </svg>
+                <div class="hidden space-x-0.5 sm:-my-px sm:ms-8 sm:flex">
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('dashboard') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                         Dashboard
                     </a>
 
                     @role('owner')
-                        <a href="{{ route('vendor.register') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('vendor.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
+                        <a href="{{ route('vendor.register') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('vendor.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                             Vendor
                         </a>
-                        <a href="{{ route('operational-staff.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('operational-staff.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M15 11a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                            Staff Operasional
+                        <a href="{{ route('operational-staff.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('operational-staff.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
+                            Staff
                         </a>
-                        <a href="{{ route('owner-assignments.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('owner-assignments.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Review Penugasan
+                        <a href="{{ route('owner-assignments.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('owner-assignments.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
+                            Review
                             @php $pendingCount = \App\Models\OperationalStaffAssignment::where('status', 1)->count(); @endphp
                             @if ($pendingCount > 0)
-                                <span class="ml-1.5 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{{ $pendingCount }}</span>
+                                <span class="ml-1.5 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full inline-flex items-center justify-center animate-pulse">{{ $pendingCount }}</span>
                             @endif
                         </a>
-                        <a href="{{ route('orders.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('orders.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                        <a href="{{ route('orders.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('orders.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                             Order
                         </a>
                     @endrole
 
                     @hasanyrole('staff-accounting|staff|manager')
-                        <a href="{{ route('customers.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('customers.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M15 11a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
+                        <a href="{{ route('customers.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('customers.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                             Customer
                         </a>
-                        <a href="{{ route('orders.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('orders.*') || request()->routeIs('import-orders.*') || request()->routeIs('export-orders.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                        <a href="{{ route('orders.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('orders.*') || request()->routeIs('import-orders.*') || request()->routeIs('export-orders.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                             Order
                         </a>
                     @endhasanyrole
 
                     @role('staff-accounting')
-                        <a href="{{ route('staff-assignments.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('staff-assignments.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                        <a href="{{ route('staff-assignments.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('staff-assignments.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                             Gaji Staff
                         </a>
                     @endrole
 
                     @hasanyrole('owner|staff-accounting')
-                        <a href="{{ route('invoices.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('invoices.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                        <a href="{{ route('invoices.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('invoices.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                             Invoice
                         </a>
                     @endhasanyrole
@@ -92,13 +67,13 @@
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50 focus:outline-none transition ease-in-out duration-150">
+                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-slate-600 bg-white hover:bg-slate-50 focus:outline-none transition ease-in-out duration-150">
                             <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-xs">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                <div class="w-8 h-8 bg-gradient-to-br from-slate-700 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </div>
-                                <div>{{ Auth::user()->name }}</div>
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <div class="font-semibold text-slate-700">{{ Auth::user()->name }}</div>
+                                <svg class="fill-current h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                             </div>
@@ -126,7 +101,7 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus:outline-none transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -137,8 +112,8 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white border-t border-slate-100">
+        <div class="pt-2 pb-3 space-y-1 px-2">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
@@ -177,10 +152,10 @@
         </div>
 
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="pt-4 pb-1 border-t border-slate-200">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="font-bold text-base text-slate-800">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-sm text-slate-500">{{ Auth::user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">

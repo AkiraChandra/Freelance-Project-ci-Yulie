@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
             @if ($errors->any())
@@ -25,7 +25,7 @@
                 </div>
             @endif
 
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8"
+            <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-8"
                 x-data="invoiceForm()" x-cloak>
 
                 <form @submit.prevent="submitForm" method="POST" action="{{ route('invoices.store') }}">
@@ -39,7 +39,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Order</label>
                                 <select x-model="orderType" name="order_type"
                                     {{ isset($parentInvoice) ? 'disabled' : '' }}
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 disabled:bg-gray-100">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 disabled:bg-gray-100">
                                     <option value="">-- Pilih Tipe --</option>
                                     <option value="import">Import</option>
                                     <option value="export">Export</option>
@@ -52,7 +52,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Order</label>
                                 <select x-model="orderId" name="order_id"
                                     {{ isset($parentInvoice) ? 'disabled' : '' }}
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 disabled:bg-gray-100">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 disabled:bg-gray-100">
                                     <option value="">-- Pilih Order --</option>
                                     <template x-if="orderType === 'import'">
                                         <template x-for="order in importOrders" :key="order.id">
@@ -77,7 +77,7 @@
                         <h3 class="text-lg font-bold text-gray-900 mb-4">📄 Judul Invoice</h3>
                         <input type="text" name="invoice_title" x-model="invoiceTitle"
                             placeholder="cth: PERINCIAN IMPORT / INVOICE / REIMBURSMENT INVOICE"
-                            class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                            class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                     </div>
 
                     {{-- Editable Header Fields --}}
@@ -94,43 +94,43 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Ex/ per kapal</label>
                                 <input type="text" name="vessel_name" x-model="headerFields.vessel_name"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tgl</label>
                                 <input type="text" name="vessel_date" x-model="headerFields.vessel_date"
                                     placeholder="dd.mm.yyyy"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tujuan</label>
                                 <input type="text" name="destination" x-model="headerFields.destination"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Party</label>
                                 <input type="text" name="party_display" x-model="headerFields.party_display"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Barang</label>
                                 <input type="text" name="product_name" x-model="headerFields.product_name"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tonage</label>
                                 <input type="text" name="tonage" x-model="headerFields.tonage"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Merk / PEB / PIB</label>
                                 <input type="text" name="merk" x-model="headerFields.merk"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Cont</label>
                                 <input type="text" name="container_display" x-model="headerFields.container_display"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                             </div>
                         </div>
                     </div>
@@ -140,7 +140,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-bold text-gray-900">📝 Perincian / Sections</h3>
                             <button type="button" @click="addSection()"
-                                class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                                class="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors">
                                 + Tambah Section
                             </button>
                         </div>
@@ -152,7 +152,7 @@
                                     <input type="text" x-model="section.name"
                                         :name="'sections[' + sIdx + '][name]'"
                                         placeholder="Nama Section (cth: INV Reimbursement)"
-                                        class="flex-1 border-2 border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                                        class="flex-1 border-2 border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                                     <button type="button" @click="removeSection(sIdx)"
                                         x-show="sections.length > 1"
                                         class="text-red-500 hover:text-red-700 text-sm font-semibold px-2 py-1 rounded hover:bg-red-50">
@@ -167,7 +167,7 @@
                                             <input type="text" x-model="item.label"
                                                 :name="'sections[' + sIdx + '][items][' + iIdx + '][label]'"
                                                 placeholder="Label (cth: Port Charges)"
-                                                class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-purple-400 focus:ring-1 focus:ring-purple-200">
+                                                class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-teal-400 focus:ring-1 focus:ring-teal-200">
                                             <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden w-56">
                                                 <span class="bg-gray-100 px-3 py-2 text-sm text-gray-600 font-medium border-r border-gray-300">Rp</span>
                                                 <input type="number" x-model.number="item.amount"
@@ -186,7 +186,7 @@
 
                                 <div class="flex items-center justify-between mt-3">
                                     <button type="button" @click="addItem(sIdx)"
-                                        class="text-sm text-purple-600 hover:text-purple-800 font-semibold">
+                                        class="text-sm text-teal-600 hover:text-teal-800 font-semibold">
                                         + Tambah Baris
                                     </button>
                                     <div class="text-sm font-semibold text-gray-700">
@@ -203,7 +203,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl p-4 cursor-pointer select-none">
                                 <input type="checkbox" x-model="includeTax" name="include_tax" value="1"
-                                    class="w-5 h-5 rounded accent-purple-600">
+                                    class="w-5 h-5 rounded accent-teal-600">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">Termasuk Pajak</p>
                                     <p class="text-xs text-gray-500">PPN akan ditambahkan</p>
@@ -213,7 +213,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">% Pajak</label>
                                 <input type="number" step="0.1" x-model.number="taxPercentage" name="tax_percentage"
                                     :disabled="!includeTax"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-purple-500 disabled:bg-gray-100 disabled:text-gray-400">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 disabled:bg-gray-100 disabled:text-gray-400">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Panjar (Uang Muka)</label>
@@ -228,7 +228,7 @@
                     </div>
 
                     {{-- Summary --}}
-                    <div class="mb-8 bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl p-6">
+                    <div class="mb-8 bg-gradient-to-br from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-xl p-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-3">📊 Ringkasan</h3>
                         <div class="space-y-2 text-sm">
                             <template x-for="(section, sIdx) in sections" :key="'sum-'+sIdx">
@@ -237,7 +237,7 @@
                                     <span class="font-semibold" x-text="formatRp(sectionTotal(sIdx))"></span>
                                 </div>
                             </template>
-                            <div class="border-t border-purple-200 my-2 pt-2 flex justify-between font-semibold">
+                            <div class="border-t border-teal-200 my-2 pt-2 flex justify-between font-semibold">
                                 <span>Grand Total</span>
                                 <span x-text="formatRp(grandTotal())"></span>
                             </div>
@@ -247,9 +247,9 @@
                                     <span x-text="formatRp(taxAmount())"></span>
                                 </div>
                             </template>
-                            <div class="flex justify-between font-bold text-base border-t border-purple-200 pt-2">
+                            <div class="flex justify-between font-bold text-base border-t border-teal-200 pt-2">
                                 <span>Jumlah Tagihan Keseluruhan</span>
-                                <span class="text-purple-700" x-text="formatRp(totalBilling())"></span>
+                                <span class="text-teal-700" x-text="formatRp(totalBilling())"></span>
                             </div>
                             <template x-if="panjar > 0">
                                 <div class="flex justify-between text-gray-600">
@@ -258,7 +258,7 @@
                                 </div>
                             </template>
                             <template x-if="panjar > 0">
-                                <div class="flex justify-between font-bold text-lg border-t border-purple-300 pt-2">
+                                <div class="flex justify-between font-bold text-lg border-t border-teal-300 pt-2">
                                     <span>Total Tagihan</span>
                                     <span class="text-green-700" x-text="formatRp(totalAfterPanjar())"></span>
                                 </div>
@@ -273,8 +273,8 @@
                             ← Kembali ke Daftar Invoice
                         </a>
                         <button type="submit"
-                            class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all">
-                            💾 Simpan Invoice
+                            class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-slate-800 to-teal-700 hover:from-slate-900 hover:to-teal-800 text-white font-bold rounded-xl shadow-lg transition-all">
+                            Simpan Invoice
                         </button>
                     </div>
                 </form>

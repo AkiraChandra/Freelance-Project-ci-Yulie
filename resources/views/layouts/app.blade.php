@@ -5,25 +5,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'PT. Suryasumatera Indahsejahtera') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <style>[x-cloak] { display: none !important; }</style>
-        
         <style>
+            [x-cloak] { display: none !important; }
             body {
-                font-family: 'Inter', sans-serif;
-                background-color: #f8fafc;
+                font-family: 'Plus Jakarta Sans', sans-serif;
             }
         </style>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-slate-50">
+        <div class="min-h-screen bg-gradient-to-br from-slate-200 via-slate-100 to-teal-100/60">
             @include('layouts.navigation')
 
             <!-- Page Content -->

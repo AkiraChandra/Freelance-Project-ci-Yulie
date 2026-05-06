@@ -5,32 +5,34 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ search: '', filterStatus: 'all' }">
 
             {{-- Header --}}
-            <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div class="mb-8 bg-gradient-to-r from-slate-800 to-teal-800 rounded-2xl shadow-lg p-6 border border-white/10">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">History Penugasan</h1>
-                    <p class="text-gray-600">Penugasan yang sudah difinalisasi (disetujui / ditolak)</p>
+                    <h1 class="text-4xl font-bold text-white mb-2">History Penugasan</h1>
+                    <p class="text-slate-300">Penugasan yang sudah difinalisasi (disetujui / ditolak)</p>
                 </div>
                 <div class="mt-4 sm:mt-0 flex gap-3 flex-wrap items-center">
                     <div class="relative">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                         </svg>
                         <input type="text" x-model="search" placeholder="Cari staff/order..."
-                            class="pl-9 pr-4 py-2.5 border-2 border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all w-full sm:w-48">
+                            class="pl-9 pr-4 py-2.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-slate-400 text-sm focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all w-full sm:w-48">
                     </div>
-                    <select x-model="filterStatus" class="px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white">
-                        <option value="all">Semua Status</option>
-                        <option value="accepted">✅ Disetujui</option>
-                        <option value="declined">❌ Ditolak</option>
+                    <select x-model="filterStatus" class="px-4 py-2.5 border border-white/20 rounded-lg text-white text-sm focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all bg-white/10">
+                        <option value="all" class="text-slate-900">Semua Status</option>
+                        <option value="accepted" class="text-slate-900">✅ Disetujui</option>
+                        <option value="declined" class="text-slate-900">❌ Ditolak</option>
                     </select>
                     <a href="{{ route('owner-assignments.index') }}"
-                        class="inline-flex items-center px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-colors text-sm">
+                        class="inline-flex items-center px-5 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold rounded-lg border border-amber-400/20 transition-colors text-sm">
                         ⏳ Pending Review
                     </a>
+                </div>
                 </div>
             </div>
 
@@ -40,31 +42,31 @@
                     $accepted = $assignments->where('status', \App\Models\OperationalStaffAssignment::STATUS_ACCEPTED);
                     $declined = $assignments->where('status', \App\Models\OperationalStaffAssignment::STATUS_DECLINED);
                 @endphp
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Total Disetujui</p>
                     <p class="text-3xl font-bold text-green-700 mt-1">{{ $accepted->count() }}</p>
                     <p class="text-sm text-gray-500 mt-1">Rp {{ number_format($accepted->sum('fee'), 0, ',', '.') }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Total Ditolak</p>
                     <p class="text-3xl font-bold text-red-600 mt-1">{{ $declined->count() }}</p>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 shadow-sm p-5">
                     <p class="text-sm text-gray-500 font-medium">Total Dibayarkan</p>
-                    <p class="text-3xl font-bold text-indigo-700 mt-1">Rp {{ number_format($accepted->sum('fee'), 0, ',', '.') }}</p>
+                    <p class="text-3xl font-bold text-teal-700 mt-1">Rp {{ number_format($accepted->sum('fee'), 0, ',', '.') }}</p>
                 </div>
             </div>
 
             {{-- Table --}}
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+            <div class="bg-slate-50 rounded-2xl shadow-xl overflow-hidden border border-slate-200">
                 @if ($assignments->count() > 0)
-                    <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                    <div class="px-6 py-4 bg-gradient-to-r from-slate-100 to-slate-50 border-b-2 border-slate-200">
                         <h3 class="text-lg font-bold text-gray-900">{{ $assignments->count() }} Record History</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b-2 border-gray-200">
+                                <tr class="border-b-2 border-slate-200">
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Staff Operasional</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Tipe Order</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">No. Order</th>
@@ -93,7 +95,7 @@
                                         ">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3 shadow">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-slate-700 to-teal-600 rounded-full flex items-center justify-center text-white font-bold mr-3 shadow">
                                                     {{ strtoupper(substr($assignment->operationalStaff->name ?? '?', 0, 1)) }}
                                                 </div>
                                                 <div>

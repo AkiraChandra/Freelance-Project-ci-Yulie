@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
 
             <!-- Back Button -->
@@ -28,8 +28,8 @@
                 </div>
             @endif
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="px-8 py-5 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-gray-200">
+            <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                <div class="px-8 py-5 bg-gradient-to-r from-teal-50 to-emerald-50 border-b border-slate-200">
                     <h3 class="text-lg font-bold text-gray-900">Informasi Customer</h3>
                     <p class="text-sm text-gray-500 mt-0.5">Isi data customer baru di bawah ini</p>
                 </div>
@@ -56,7 +56,7 @@
                         <input type="text" name="customer_name" id="customer_name"
                             value="{{ old('customer_name') }}" required
                             placeholder="Contoh: PT Maju Bersama"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all font-medium">
+                            class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all font-medium">
                     </div>
 
                     <!-- Type -->
@@ -113,7 +113,7 @@
                             Batal
                         </a>
                         <button type="submit"
-                            class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow transition-colors">
+                            class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow transition-colors">
                             Simpan Customer
                         </button>
                     </div>

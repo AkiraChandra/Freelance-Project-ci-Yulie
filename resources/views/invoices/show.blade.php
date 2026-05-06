@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">Detail Invoice</h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
             @if (session('success'))
@@ -34,7 +34,7 @@
                 </div>
                 <div class="flex flex-wrap gap-2" x-data="{ showPdfOptions: false }">
                     <a href="{{ route('invoices.edit', $invoice) }}"
-                        class="inline-flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors shadow">
+                        class="inline-flex items-center px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors shadow">
                         Edit Invoice
                     </a>
                     <a href="{{ route('invoices.revision', $invoice) }}"
@@ -68,7 +68,7 @@
             </div>
 
             {{-- Order Info Card --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
                 <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">📋 Data Invoice</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
@@ -107,7 +107,7 @@
             </div>
 
             {{-- Sections --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
                 <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">📝 Perincian</h3>
                 @foreach ($invoice->sections as $idx => $section)
                     <div class="mb-6 {{ !$loop->last ? 'border-b pb-6' : '' }}">
@@ -139,8 +139,8 @@
             </div>
 
             {{-- Summary --}}
-            <div class="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-2xl p-6">
-                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">💰 Ringkasan Tagihan</h3>
+            <div class="bg-gradient-to-br from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-2xl p-6">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Ringkasan Tagihan</h3>
                 <table class="w-full text-sm">
                     <tr>
                         <td class="py-1 text-gray-600">Grand Total</td>
@@ -152,16 +152,16 @@
                             <td class="py-1 text-right">Rp {{ number_format($invoice->tax_amount, 0, ',', '.') }}</td>
                         </tr>
                     @endif
-                    <tr class="border-t border-purple-200">
+                    <tr class="border-t border-teal-200">
                         <td class="py-2 font-bold">Jumlah Tagihan Keseluruhan</td>
-                        <td class="py-2 text-right font-bold text-lg text-purple-700">Rp {{ number_format($invoice->total_billing, 0, ',', '.') }}</td>
+                        <td class="py-2 text-right font-bold text-lg text-teal-700">Rp {{ number_format($invoice->total_billing, 0, ',', '.') }}</td>
                     </tr>
                     @if ($invoice->panjar > 0)
                         <tr>
                             <td class="py-1 text-gray-600">Panjar</td>
                             <td class="py-1 text-right text-red-600">- Rp {{ number_format($invoice->panjar, 0, ',', '.') }}</td>
                         </tr>
-                        <tr class="border-t border-purple-300">
+                        <tr class="border-t border-teal-300">
                             <td class="py-2 font-bold text-lg">Total Tagihan</td>
                             <td class="py-2 text-right font-bold text-xl text-green-700">Rp {{ number_format($invoice->total_after_panjar, 0, ',', '.') }}</td>
                         </tr>

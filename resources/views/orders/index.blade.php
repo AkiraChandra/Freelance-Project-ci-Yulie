@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">Daftar Order</h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             @if (session('success'))
@@ -16,15 +16,15 @@
             @endif
 
             <!-- Header -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="bg-gradient-to-r from-slate-800 to-teal-800 rounded-2xl shadow-lg p-6 mb-6 border border-white/10">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Order</h1>
-                        <p class="text-gray-500 text-sm mt-1">Kelola semua order impor dan ekspor</p>
+                        <h1 class="text-2xl font-bold text-white">Order</h1>
+                        <p class="text-slate-300 text-sm mt-1">Kelola semua order impor dan ekspor</p>
                     </div>
                     @hasanyrole('staff|manager')
                     <a href="{{ route('orders.select-type') }}"
-                        class="inline-flex items-center px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow transition-colors">
+                        class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-colors">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
@@ -49,17 +49,17 @@
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
                     <div class="flex gap-2">
                         <button @click="tab = 'impor'"
-                            :class="tab === 'impor' ? 'bg-purple-600 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+                            :class="tab === 'impor' ? 'bg-teal-600 text-white shadow' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'"
                             class="px-5 py-2 rounded-xl font-semibold text-sm transition-all">
                             Impor ({{ $importOrders->count() }})
                         </button>
                         <button @click="tab = 'ekspor'"
-                            :class="tab === 'ekspor' ? 'bg-purple-600 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+                            :class="tab === 'ekspor' ? 'bg-teal-600 text-white shadow' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'"
                             class="px-5 py-2 rounded-xl font-semibold text-sm transition-all">
                             Ekspor ({{ $exportOrders->count() }})
                         </button>
                     </div>
-                    <div class="flex items-center gap-4 ml-0 sm:ml-4 bg-white border border-gray-200 rounded-xl px-4 py-2">
+                    <div class="flex items-center gap-4 ml-0 sm:ml-4 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2">
                         <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Tampilkan:</span>
                         <label class="flex items-center gap-1.5 cursor-pointer text-sm">
                             <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
@@ -80,7 +80,7 @@
                 </div>
 
                 <!-- IMPOR TABLE -->
-                <div x-show="tab === 'impor'" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div x-show="tab === 'impor'" class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     @if ($importOrders->isEmpty())
                         <div class="text-center py-16 text-gray-400">
                             <p class="font-medium text-lg">Belum ada order impor</p>
@@ -88,7 +88,7 @@
                     @else
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
-                                <thead class="bg-gray-50 border-b border-gray-200">
+                                <thead class="bg-slate-100 border-b border-slate-200">
                                     <tr>
                                         <th class="px-4 py-3 font-semibold text-gray-600">No Order</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Tgl Order</th>
@@ -104,7 +104,7 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
                                     @foreach ($importOrders as $order)
-                                        <tr class="hover:bg-gray-50 transition-colors"
+                                        <tr class="hover:bg-teal-50/50 transition-colors"
                                             x-show="matchStatus('{{ $order->status }}')">
                                             <td class="px-4 py-3">
                                                     {{ $order->import_order_number }}
@@ -129,7 +129,7 @@
                                                 @hasanyrole('staff|manager')
                                                 <div class="flex items-center justify-center gap-2">
                                                     <a href="{{ route('import-orders.edit', $order) }}"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-lg text-xs transition-colors">
+                                                        class="inline-flex items-center px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium rounded-lg text-xs transition-colors">
                                                         Edit
                                                     </a>
                                                     <form action="{{ route('import-orders.destroy', $order) }}" method="POST"
@@ -152,7 +152,7 @@
                 </div>
 
                 <!-- EKSPOR TABLE -->
-                <div x-show="tab === 'ekspor'" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div x-show="tab === 'ekspor'" class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     @if ($exportOrders->isEmpty())
                         <div class="text-center py-16 text-gray-400">
                             <p class="font-medium text-lg">Belum ada order ekspor</p>
@@ -160,7 +160,7 @@
                     @else
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
-                                <thead class="bg-gray-50 border-b border-gray-200">
+                                <thead class="bg-slate-100 border-b border-slate-200">
                                     <tr>
                                         <th class="px-4 py-3 font-semibold text-gray-600">No Order</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Tgl Order</th>
@@ -176,7 +176,7 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
                                     @foreach ($exportOrders as $order)
-                                        <tr class="hover:bg-gray-50 transition-colors"
+                                        <tr class="hover:bg-teal-50/50 transition-colors"
                                             x-show="matchStatus('{{ $order->status }}')">
                                             <td class="px-4 py-3">
                                                     {{ $order->export_order_number }}
@@ -201,7 +201,7 @@
                                                 @hasanyrole('staff|manager')
                                                 <div class="flex items-center justify-center gap-2">
                                                     <a href="{{ route('export-orders.edit', $order) }}"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-lg text-xs transition-colors">
+                                                        class="inline-flex items-center px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium rounded-lg text-xs transition-colors">
                                                         Edit
                                                     </a>
                                                     <form action="{{ route('export-orders.destroy', $order) }}" method="POST"

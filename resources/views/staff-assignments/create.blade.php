@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 min-h-screen">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Errors --}}
@@ -20,7 +20,7 @@
                 </div>
             @endif
 
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8"
+            <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-8"
                 x-data="{
                     orderType: '{{ old('order_type', 'export') }}',
                     selectedStaff: '{{ old('operational_staff_id', '') }}',
@@ -50,7 +50,7 @@
                             Staff Operasional <span class="text-red-500">*</span>
                         </label>
                         <select name="operational_staff_id" x-model="selectedStaff" required
-                            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                             <option value="">-- Pilih Staff --</option>
                             @foreach ($staffs as $staff)
                                 <option value="{{ $staff->id }}" {{ old('operational_staff_id') == $staff->id ? 'selected' : '' }}>
@@ -88,7 +88,7 @@
                             Pilih Order <span class="text-red-500">*</span>
                         </label>
                         <select name="order_id" required
-                            class="w-full px-4 py-2.5 border-2 {{ $errors->has('order_id') ? 'border-red-400' : 'border-gray-300' }} rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                            class="w-full px-4 py-2.5 border-2 {{ $errors->has('order_id') ? 'border-red-400' : 'border-gray-300' }} rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all">
                             <option value="">-- Pilih Order --</option>
                             <template x-for="order in currentOrders" :key="order.id">
                                 <option :value="order.id" x-text="order.label"
@@ -130,7 +130,7 @@
                             Catatan <span class="text-gray-400 font-normal">(opsional)</span>
                         </label>
                         <textarea name="notes" rows="3" maxlength="500" placeholder="Keterangan tambahan..."
-                            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none">{{ old('notes') }}</textarea>
+                            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all resize-none">{{ old('notes') }}</textarea>
                     </div>
 
                     <div class="flex gap-3">
