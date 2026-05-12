@@ -13,6 +13,7 @@ class Customer extends Model
         'customer_code',
         'customer_name',
         'type',
+        'city',
         'created_by',
     ];
 

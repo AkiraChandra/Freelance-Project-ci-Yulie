@@ -112,6 +112,16 @@
                         </div>
                     </div>
 
+                    <!-- City -->
+                    <div>
+                        <label for="city" class="block text-sm font-bold text-gray-700 mb-2">
+                            Kota
+                        </label>
+                        <input type="text" name="city" id="city"
+                            value="{{ old('city', $customer->city) }}"
+                            class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all font-medium">
+                    </div>
+
                     <!-- Actions -->
                     <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
                         <a href="{{ route('customers.index') }}"

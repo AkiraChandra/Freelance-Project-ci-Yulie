@@ -67,7 +67,7 @@
                 Medan, {{ now()->format('d.m.Y') }}<br>
                 Kepada Yth<br>
                 <span class="b">{{ $customerName }}</span><br>
-                <span class="b u">MEDAN</span>
+                <span class="b u">{{ strtoupper($order->customer->city ?? 'MEDAN') }}</span>
             </td>
         </tr>
     </table>

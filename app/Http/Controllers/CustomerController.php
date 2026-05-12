@@ -24,6 +24,7 @@ class CustomerController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255|unique:customers,customer_name',
             'type'          => 'required|in:ekspor,impor',
+            'city'          => 'nullable|string|max:100',
         ], [
             'customer_name.required' => 'Nama customer tidak boleh kosong.',
             'customer_name.unique'   => 'Nama customer sudah terdaftar, gunakan nama lain.',
@@ -38,6 +39,7 @@ class CustomerController extends Controller
             'customer_code' => $code,
             'customer_name' => $request->customer_name,
             'type'          => $request->type,
+            'city'          => $request->city ?: 'MEDAN',
             'created_by'    => auth()->id(),
         ]);
 
@@ -55,6 +57,7 @@ class CustomerController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255|unique:customers,customer_name,' . $customer->id,
             'type'          => 'required|in:ekspor,impor',
+            'city'          => 'nullable|string|max:100',
         ], [
             'customer_name.required' => 'Nama customer tidak boleh kosong.',
             'customer_name.unique'   => 'Nama customer sudah terdaftar, gunakan nama lain.',
@@ -63,7 +66,7 @@ class CustomerController extends Controller
             'type.in'                => 'Tipe customer tidak valid.',
         ]);
 
-        $customer->update($request->only('customer_name', 'type'));
+        $customer->update($request->only('customer_name', 'type', 'city'));
 
         return redirect()->route('customers.index')
             ->with('success', "Customer \"{$customer->customer_name}\" berhasil diupdate!");
