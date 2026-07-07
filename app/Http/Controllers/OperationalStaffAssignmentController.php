@@ -12,7 +12,7 @@ class OperationalStaffAssignmentController extends Controller
 {
     public function index()
     {
-        $assignments = OperationalStaffAssignment::with('operationalStaff', 'assignedBy')
+        $assignments = OperationalStaffAssignment::with('operationalStaff', 'assignedBy', 'expenses')
             ->where('assigned_by', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get()
@@ -22,6 +22,45 @@ class OperationalStaffAssignmentController extends Controller
             });
 
         return view('staff-assignments.index', compact('assignments'));
+    }
+
+    /**
+     * Show detailed expense report for a specific order
+     */
+    public function showOrderDetail($orderType, $orderId)
+    {
+        // Get all assignments for this order
+        $assignments = OperationalStaffAssignment::with(['operationalStaff', 'expenses' => function($query) {
+                $query->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc');
+            }])
+            ->where('order_type', $orderType)
+            ->where('order_id', $orderId)
+            ->whereIn('status', [
+                OperationalStaffAssignment::STATUS_REQUEST,
+                OperationalStaffAssignment::STATUS_ACCEPTED,
+            ])
+            ->get();
+
+        if ($assignments->isEmpty()) {
+            return redirect()->route('staff-assignments.index')
+                ->with('error', 'Order tidak ditemukan atau belum ada assignment.');
+        }
+
+        // Get order info
+        if ($orderType === 'export') {
+            $order = ExportOrder::with('customer')->find($orderId);
+            $orderNumber = $order->export_order_number ?? 'Unknown';
+        } else {
+            $order = ImportOrder::with('customer')->find($orderId);
+            $orderNumber = $order->import_order_number ?? 'Unknown';
+        }
+
+        // Calculate totals
+        $grandTotal = $assignments->sum(function($assignment) {
+            return $assignment->expenses->sum('amount');
+        });
+
+        return view('staff-assignments.order-detail', compact('assignments', 'order', 'orderNumber', 'orderType', 'grandTotal'));
     }
 
     public function create()
@@ -52,14 +91,10 @@ class OperationalStaffAssignmentController extends Controller
             'operational_staff_id' => 'required|exists:operational_staffs,id',
             'order_type'           => 'required|in:export,import',
             'order_id'             => 'required|integer',
-            'fee'                  => 'required|numeric|min:0',
-            'notes'                => 'nullable|string|max:500',
         ], [
             'operational_staff_id.required' => 'Staff operasional wajib dipilih.',
             'order_type.required'           => 'Tipe order wajib dipilih.',
             'order_id.required'             => 'Order wajib dipilih.',
-            'fee.required'                  => 'Biaya wajib diisi.',
-            'fee.min'                       => 'Biaya tidak boleh negatif.',
         ]);
 
         // Validate order exists
@@ -91,17 +126,17 @@ class OperationalStaffAssignmentController extends Controller
                 ->withInput();
         }
 
-        OperationalStaffAssignment::create([
+        $assignment = OperationalStaffAssignment::create([
             'operational_staff_id' => $request->operational_staff_id,
             'order_type'           => $request->order_type,
             'order_id'             => $request->order_id,
-            'fee'                  => $request->fee,
-            'notes'                => $request->notes,
+            'fee'                  => 0, // Default 0, nanti diisi via expenses
+            'notes'                => null,
             'assigned_by'          => auth()->id(),
         ]);
 
-        return redirect()->route('staff-assignments.index')
-            ->with('success', 'Assignment staff operasional berhasil disimpan!');
+        return redirect()->route('staff-assignments.expenses.index', $assignment)
+            ->with('success', 'Staff berhasil di-assign! Silakan input detail biaya di bawah ini.');
     }
 
     public function destroy(OperationalStaffAssignment $staffAssignment)

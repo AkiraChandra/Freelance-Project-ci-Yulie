@@ -116,6 +116,14 @@ Route::middleware(['auth', 'role:staff-accounting', 'check.user.status'])->group
     Route::get('/staff-assignments/create', [OperationalStaffAssignmentController::class, 'create'])->name('staff-assignments.create');
     Route::post('/staff-assignments', [OperationalStaffAssignmentController::class, 'store'])->name('staff-assignments.store');
     Route::delete('/staff-assignments/{staffAssignment}', [OperationalStaffAssignmentController::class, 'destroy'])->name('staff-assignments.destroy');
+    
+    // Order detail report
+    Route::get('/staff-assignments/order/{orderType}/{orderId}', [OperationalStaffAssignmentController::class, 'showOrderDetail'])->name('staff-assignments.order-detail');
+    
+    // Expense management for assignments
+    Route::get('/staff-assignments/{assignment}/expenses', [\App\Http\Controllers\OperationalExpenseController::class, 'index'])->name('staff-assignments.expenses.index');
+    Route::post('/staff-assignments/{assignment}/expenses', [\App\Http\Controllers\OperationalExpenseController::class, 'store'])->name('staff-assignments.expenses.store');
+    Route::delete('/staff-assignments/{assignment}/expenses/{expense}', [\App\Http\Controllers\OperationalExpenseController::class, 'destroy'])->name('staff-assignments.expenses.destroy');
 });
 
 // Invoice Routes - Owner and Accounting

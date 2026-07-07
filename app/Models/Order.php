@@ -42,4 +42,9 @@ class Order extends Model
     {
         return $this->hasOne(ExportOrder::class);
     }
+
+    public function containers()
+    {
+        return $this->hasMany(OrderContainer::class);
+    }
 }

@@ -232,13 +232,15 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector('form').addEventListener('submit', function (e) {
-            const v1 = document.querySelector('[name="trucking_vendor_1"]').value;
-            const v2 = document.querySelector('[name="trucking_vendor_2"]').value;
-            if (v1 && v2 && v1 === v2) {
-                e.preventDefault();
-                alert('Vendor 1 dan Vendor 2 tidak boleh sama!');
-            }
+        // Clear localStorage if coming back from successful submission
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('clear_storage')) {
+            localStorage.removeItem('container_data_create');
+        }
+        
+        // Mark form as submitting - will be used to clear localStorage on success
+        document.querySelector('form').addEventListener('submit', function () {
+            sessionStorage.setItem('form_submitting', 'true');
         });
     });
     </script>

@@ -225,4 +225,16 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Check if form was just submitted and succeeded
+        if (sessionStorage.getItem('form_submitting') === 'true') {
+            // Clear all container localStorage for create forms
+            localStorage.removeItem('container_data_create');
+            // Remove the flag
+            sessionStorage.removeItem('form_submitting');
+        }
+    });
+    </script>
 </x-app-layout>

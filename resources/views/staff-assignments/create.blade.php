@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-            ➕ Tambah Penugasan Staff Operasional
+            ➕ Assign Staff ke Order
         </h2>
     </x-slot>
 
@@ -39,7 +39,7 @@
                     }
                 }">
 
-                <h3 class="text-xl font-bold text-gray-900 mb-6">Detail Penugasan</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-6">📋 Pilih Staff dan Order</h3>
 
                 <form method="POST" action="{{ route('staff-assignments.store') }}">
                     @csrf
@@ -83,7 +83,7 @@
                     </div>
 
                     {{-- Order --}}
-                    <div class="mb-5">
+                    <div class="mb-8">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">
                             Pilih Order <span class="text-red-500">*</span>
                         </label>
@@ -107,36 +107,15 @@
                                 {{ $message }}
                             </p>
                         @enderror
-                    </div>
-
-                    {{-- Fee --}}
-                    <div class="mb-5">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">
-                            Biaya / Gaji <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex rounded-lg border-2 border-gray-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all overflow-hidden">
-                            <span class="flex items-center px-3 bg-gray-100 text-gray-600 font-semibold text-sm border-r-2 border-gray-300 select-none whitespace-nowrap">
-                                Rp
-                            </span>
-                            <input type="number" name="fee" value="{{ old('fee', 0) }}" min="0" step="1000" required
-                                class="flex-1 px-4 py-2.5 text-gray-900 text-sm bg-white outline-none"
-                                placeholder="0">
-                        </div>
-                    </div>
-
-                    {{-- Notes --}}
-                    <div class="mb-8">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">
-                            Catatan <span class="text-gray-400 font-normal">(opsional)</span>
-                        </label>
-                        <textarea name="notes" rows="3" maxlength="500" placeholder="Keterangan tambahan..."
-                            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-gray-900 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all resize-none">{{ old('notes') }}</textarea>
+                        <p class="mt-2 text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                            💡 <span class="font-semibold">Tips:</span> Setelah assign staff, klik tombol "Kelola Biaya" untuk input detail pengeluaran
+                        </p>
                     </div>
 
                     <div class="flex gap-3">
                         <button type="submit"
                             class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-lg shadow-lg transition-all duration-200">
-                            💾 Simpan Penugasan
+                            ✅ Assign Staff ke Order
                         </button>
                         <a href="{{ route('staff-assignments.index') }}"
                             class="px-8 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors">

@@ -51,7 +51,7 @@
 
                     @role('staff-accounting')
                         <a href="{{ route('staff-assignments.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('staff-assignments.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
-                            Gaji Staff
+                            Penugasan Staff
                         </a>
                     @endrole
 
@@ -141,7 +141,7 @@
             @endhasanyrole
             @role('staff-accounting')
                 <x-responsive-nav-link :href="route('staff-assignments.index')" :active="request()->routeIs('staff-assignments.*')">
-                    {{ __('Gaji Staff') }}
+                    {{ __('Penugasan Staff') }}
                 </x-responsive-nav-link>
             @endrole
             @hasanyrole('owner|staff-accounting')

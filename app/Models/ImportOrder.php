@@ -10,6 +10,7 @@ class ImportOrder extends Model
     use HasFactory;
 
     protected $fillable = [
+        'order_id',
         'customer_id',
         'import_order_number',
         'order_date',
@@ -20,14 +21,11 @@ class ImportOrder extends Model
         'voy_number',
         'vessel_arrival_date',
         'pib_number',
-        'party',
         'port',
         'do_date',
-        'container_number',
         'demurrage_date',
         'release_date',
         'container_return_date',
-        'trucking_vendor',
         'issue',
         'status',
         'created_by',
@@ -55,5 +53,10 @@ class ImportOrder extends Model
     public function creator()
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');
+    }
+
+    public function containers()
+    {
+        return $this->hasMany(OrderContainer::class, 'order_id', 'order_id')->where('order_type', 'import');
     }
 }

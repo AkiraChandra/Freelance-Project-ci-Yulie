@@ -10,6 +10,7 @@ class ExportOrder extends Model
     use HasFactory;
 
     protected $fillable = [
+        'order_id',
         'customer_id',
         'export_order_number',
         'order_date',
@@ -21,12 +22,9 @@ class ExportOrder extends Model
         'voy_number',
         'closing_date',
         'peb_number',
-        'party',
         'depo',
-        'container_number',
         'pickup_date',
         'return_date',
-        'trucking_vendor',
         'issue',
         'status',
         'created_by',
@@ -52,5 +50,10 @@ class ExportOrder extends Model
     public function creator()
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');
+    }
+
+    public function containers()
+    {
+        return $this->hasMany(OrderContainer::class, 'order_id', 'order_id')->where('order_type', 'export');
     }
 }
