@@ -75,9 +75,13 @@
                     {{-- Judul Invoice --}}
                     <div class="mb-8 border-b pb-8">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">📄 Judul Invoice</h3>
-                        <input type="text" name="invoice_title" x-model="invoiceTitle"
-                            placeholder="cth: PERINCIAN IMPORT / INVOICE / REIMBURSMENT INVOICE"
+                        <select name="invoice_title" x-model="invoiceTitle" required
                             class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
+                            <option value="">-- Pilih Tipe Invoice --</option>
+                            <option value="Reimbursement">Reimbursement</option>
+                            <option value="Invoice">Invoice</option>
+                        </select>
+                        <input type="hidden" name="invoice_type" :value="invoiceTitle === 'Reimbursement' ? 'reimbursement' : 'invoice'">
                     </div>
 
                     {{-- Editable Header Fields --}}
@@ -138,26 +142,21 @@
                     {{-- Sections --}}
                     <div class="mb-8">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-bold text-gray-900">📝 Perincian / Sections</h3>
-                            <button type="button" @click="addSection()"
-                                class="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                                + Tambah Section
-                            </button>
+                            <h3 class="text-lg font-bold text-gray-900">📝 Perincian / Sections (Fixed 3 Section)</h3>
                         </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            <strong>Section 1:</strong> Reimbursement (tidak dihitung pajak) • 
+                            <strong>Section 2:</strong> Detail Invoice • 
+                            <strong>Section 3:</strong> Trucking
+                        </p>
 
                         <template x-for="(section, sIdx) in sections" :key="sIdx">
                             <div class="mb-6 border-2 border-gray-200 rounded-xl p-5 bg-gray-50">
                                 <div class="flex items-center gap-3 mb-4">
                                     <span class="text-sm font-bold text-gray-500" x-text="romanNumeral(sIdx + 1) + ')'"></span>
-                                    <input type="text" x-model="section.name"
+                                    <input type="text" x-model="section.name" readonly
                                         :name="'sections[' + sIdx + '][name]'"
-                                        placeholder="Nama Section (cth: INV Reimbursement)"
-                                        class="flex-1 border-2 border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
-                                    <button type="button" @click="removeSection(sIdx)"
-                                        x-show="sections.length > 1"
-                                        class="text-red-500 hover:text-red-700 text-sm font-semibold px-2 py-1 rounded hover:bg-red-50">
-                                        🗑️ Hapus Section
-                                    </button>
+                                        class="flex-1 border-2 border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold bg-gray-100 cursor-not-allowed">
                                 </div>
 
                                 {{-- Items --}}
@@ -195,33 +194,69 @@
                                 </div>
                             </div>
                         </template>
+                        
+                        <!-- Trucking Info -->
+                        <div x-show="selectedOrder" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <h4 class="text-sm font-bold text-blue-900 mb-2">ℹ️ Info Trucking</h4>
+                            <ul class="text-xs text-blue-800 space-y-1">
+                                <li>• <strong>Section 3 (Trucking)</strong> digunakan untuk biaya trucking dari orderan</li>
+                                <li>• Dapat dipilih untuk dikenakan pajak atau tidak (lihat opsi pajak di bawah)</li>
+                                <li>• Isikan detail biaya trucking sesuai dengan container yang digunakan</li>
+                            </ul>
+                        </div>
                     </div>
 
                     {{-- Tax & Panjar --}}
                     <div class="mb-8 border-t pt-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">💰 Pajak & Panjar</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 gap-4">
                             <label class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl p-4 cursor-pointer select-none">
                                 <input type="checkbox" x-model="includeTax" name="include_tax" value="1"
                                     class="w-5 h-5 rounded accent-teal-600">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">Termasuk Pajak</p>
-                                    <p class="text-xs text-gray-500">PPN akan ditambahkan</p>
+                                    <p class="text-xs text-gray-500">PPN akan ditambahkan dari section yang dipilih</p>
                                 </div>
                             </label>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">% Pajak</label>
-                                <input type="number" step="0.1" x-model.number="taxPercentage" name="tax_percentage"
-                                    :disabled="!includeTax"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 disabled:bg-gray-100 disabled:text-gray-400">
+                            
+                            <!-- Taxable Sections Selection -->
+                            <div x-show="includeTax" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                                <p class="text-sm font-bold text-amber-900 mb-3">Pilih Section yang Dikenakan Pajak:</p>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2 text-sm">
+                                        <input type="checkbox" disabled checked
+                                            class="w-4 h-4 rounded accent-gray-400 cursor-not-allowed">
+                                        <span class="text-gray-400"><del>Section 1: Reimbursement</del> (tidak dikenakan pajak)</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                                        <input type="checkbox" x-model="taxableSections" name="taxable_sections[]" value="1"
+                                            class="w-4 h-4 rounded accent-teal-600">
+                                        <span class="text-gray-800 font-medium">Section 2: Detail Invoice</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                                        <input type="checkbox" x-model="taxableSections" name="taxable_sections[]" value="2"
+                                            class="w-4 h-4 rounded accent-teal-600">
+                                        <span class="text-gray-800 font-medium">Section 3: Trucking</span>
+                                    </label>
+                                </div>
+                                <p class="text-xs text-amber-700 mt-3">💡 Pilih satu atau kedua section untuk dihitung pajaknya</p>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Panjar (Uang Muka)</label>
-                                <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
-                                    <span class="bg-gray-100 px-3 py-2.5 text-sm text-gray-600 font-medium border-r-2 border-gray-300">Rp</span>
-                                    <input type="number" x-model.number="panjar" name="panjar"
-                                        placeholder="0"
-                                        class="flex-1 px-3 py-2.5 text-sm focus:outline-none focus:ring-0 border-0">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">% Pajak</label>
+                                    <input type="number" step="0.1" x-model.number="taxPercentage" name="tax_percentage"
+                                        :disabled="!includeTax"
+                                        class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 disabled:bg-gray-100 disabled:text-gray-400">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Panjar (Uang Muka)</label>
+                                    <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
+                                        <span class="bg-gray-100 px-3 py-2.5 text-sm text-gray-600 font-medium border-r-2 border-gray-300">Rp</span>
+                                        <input type="number" x-model.number="panjar" name="panjar"
+                                            placeholder="0"
+                                            class="flex-1 px-3 py-2.5 text-sm focus:outline-none focus:ring-0 border-0">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -241,10 +276,22 @@
                                 <span>Grand Total</span>
                                 <span x-text="formatRp(grandTotal())"></span>
                             </div>
-                            <template x-if="includeTax">
-                                <div class="flex justify-between text-gray-600">
-                                    <span x-text="'PPN ' + taxPercentage + '%'"></span>
-                                    <span x-text="formatRp(taxAmount())"></span>
+                            <template x-if="includeTax && taxableSections.length > 0">
+                                <div class="bg-amber-50 border border-amber-200 rounded p-2 my-2">
+                                    <div class="flex justify-between text-gray-600 text-xs mb-1">
+                                        <span>Basis Pajak:</span>
+                                        <span></span>
+                                    </div>
+                                    <template x-for="sIdx in taxableSections" :key="'tax-'+sIdx">
+                                        <div class="flex justify-between text-gray-600 text-xs pl-3">
+                                            <span x-text="'• ' + sections[sIdx].name"></span>
+                                            <span x-text="formatRp(sectionTotal(sIdx))"></span>
+                                        </div>
+                                    </template>
+                                    <div class="flex justify-between text-gray-700 font-medium text-xs mt-1 pt-1 border-t border-amber-300">
+                                        <span x-text="'PPN ' + taxPercentage + '%'"></span>
+                                        <span x-text="formatRp(taxAmount())"></span>
+                                    </div>
                                 </div>
                             </template>
                             <div class="flex justify-between font-bold text-base border-t border-teal-200 pt-2">
@@ -302,9 +349,14 @@
                     merk: '',
                     container_display: '',
                 },
-                sections: [{ name: '', items: [{ label: '', amount: 0 }] }],
+                sections: [
+                    { name: 'Reimbursement', items: [{ label: '', amount: 0 }] },
+                    { name: 'Detail Invoice', items: [{ label: '', amount: 0 }] },
+                    { name: 'Trucking', items: [{ label: '', amount: 0 }] }
+                ],
                 includeTax: parentInvoice ? !!parentInvoice.include_tax : false,
                 taxPercentage: parentInvoice ? parseFloat(parentInvoice.tax_percentage) || 1.1 : 1.1,
+                taxableSections: parentInvoice ? (parentInvoice.taxable_sections || []) : [],
                 panjar: parentInvoice ? parseFloat(parentInvoice.panjar) || 0 : 0,
 
                 init() {
@@ -348,12 +400,6 @@
                     return list.find(o => o.id == this.orderId) || null;
                 },
 
-                addSection() {
-                    this.sections.push({ name: '', items: [{ label: '', amount: 0 }] });
-                },
-                removeSection(idx) {
-                    this.sections.splice(idx, 1);
-                },
                 addItem(sIdx) {
                     this.sections[sIdx].items.push({ label: '', amount: 0 });
                 },
@@ -368,7 +414,14 @@
                 },
                 taxAmount() {
                     if (!this.includeTax) return 0;
-                    return this.grandTotal() * (this.taxPercentage / 100);
+                    if (!this.taxableSections || this.taxableSections.length === 0) return 0;
+                    
+                    let taxableTotal = 0;
+                    this.taxableSections.forEach(sectionIndex => {
+                        taxableTotal += this.sectionTotal(sectionIndex);
+                    });
+                    
+                    return taxableTotal * (this.taxPercentage / 100);
                 },
                 totalBilling() {
                     return this.grandTotal() + this.taxAmount();

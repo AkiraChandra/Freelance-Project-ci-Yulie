@@ -57,6 +57,7 @@ class InvoiceController extends Controller
             'order_type'              => 'required|in:import,export',
             'order_id'                => 'required|integer',
             'invoice_title'           => 'required|string|max:255',
+            'invoice_type'            => 'required|in:reimbursement,invoice',
             'vessel_name'             => 'nullable|string|max:255',
             'vessel_date'             => 'nullable|string|max:255',
             'destination'             => 'nullable|string|max:255',
@@ -65,7 +66,7 @@ class InvoiceController extends Controller
             'tonage'                  => 'nullable|string|max:255',
             'merk'                    => 'nullable|string|max:255',
             'container_display'       => 'nullable|string|max:255',
-            'sections'                => 'required|array|min:1',
+            'sections'                => 'required|array|min:3|max:3',
             'sections.*.name'         => 'required|string|max:255',
             'sections.*.items'        => 'required|array|min:1',
             'sections.*.items.*.label'  => 'required|string|max:255',
@@ -73,6 +74,8 @@ class InvoiceController extends Controller
             'panjar'                  => 'nullable|numeric|min:0',
             'include_tax'             => 'nullable|boolean',
             'tax_percentage'          => 'nullable|numeric|min:0|max:100',
+            'taxable_sections'        => 'nullable|array',
+            'taxable_sections.*'      => 'integer|min:0|max:2',
         ]);
 
         // Verify order exists
@@ -94,6 +97,7 @@ class InvoiceController extends Controller
             'order_id'          => $request->order_id,
             'nota_number'       => $nota['nota'],
             'invoice_title'     => $request->invoice_title,
+            'invoice_type'      => $request->invoice_type,
             'vessel_name'       => $request->vessel_name,
             'vessel_date'       => $request->vessel_date,
             'destination'       => $request->destination,
@@ -107,6 +111,7 @@ class InvoiceController extends Controller
             'panjar'            => $request->panjar ?? 0,
             'include_tax'       => $request->boolean('include_tax'),
             'tax_percentage'    => $request->tax_percentage ?? 1.1,
+            'taxable_sections'  => $request->taxable_sections ?? [],
             'created_by'        => auth()->id(),
         ]);
 
@@ -140,6 +145,7 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'invoice_title'           => 'required|string|max:255',
+            'invoice_type'            => 'required|in:reimbursement,invoice',
             'vessel_name'             => 'nullable|string|max:255',
             'vessel_date'             => 'nullable|string|max:255',
             'destination'             => 'nullable|string|max:255',
@@ -148,7 +154,7 @@ class InvoiceController extends Controller
             'tonage'                  => 'nullable|string|max:255',
             'merk'                    => 'nullable|string|max:255',
             'container_display'       => 'nullable|string|max:255',
-            'sections'                => 'required|array|min:1',
+            'sections'                => 'required|array|min:3|max:3',
             'sections.*.name'         => 'required|string|max:255',
             'sections.*.items'        => 'required|array|min:1',
             'sections.*.items.*.label'  => 'required|string|max:255',
@@ -156,10 +162,13 @@ class InvoiceController extends Controller
             'panjar'                  => 'nullable|numeric|min:0',
             'include_tax'             => 'nullable|boolean',
             'tax_percentage'          => 'nullable|numeric|min:0|max:100',
+            'taxable_sections'        => 'nullable|array',
+            'taxable_sections.*'      => 'integer|min:0|max:2',
         ]);
 
         $invoice->update([
             'invoice_title'     => $request->invoice_title,
+            'invoice_type'      => $request->invoice_type,
             'vessel_name'       => $request->vessel_name,
             'vessel_date'       => $request->vessel_date,
             'destination'       => $request->destination,
@@ -172,6 +181,7 @@ class InvoiceController extends Controller
             'panjar'            => $request->panjar ?? 0,
             'include_tax'       => $request->boolean('include_tax'),
             'tax_percentage'    => $request->tax_percentage ?? 1.1,
+            'taxable_sections'  => $request->taxable_sections ?? [],
         ]);
 
         return redirect()->route('invoices.show', $invoice)
@@ -198,6 +208,7 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'invoice_title'           => 'required|string|max:255',
+            'invoice_type'            => 'required|in:reimbursement,invoice',
             'vessel_name'             => 'nullable|string|max:255',
             'vessel_date'             => 'nullable|string|max:255',
             'destination'             => 'nullable|string|max:255',
@@ -206,7 +217,7 @@ class InvoiceController extends Controller
             'tonage'                  => 'nullable|string|max:255',
             'merk'                    => 'nullable|string|max:255',
             'container_display'       => 'nullable|string|max:255',
-            'sections'                => 'required|array|min:1',
+            'sections'                => 'required|array|min:3|max:3',
             'sections.*.name'         => 'required|string|max:255',
             'sections.*.items'        => 'required|array|min:1',
             'sections.*.items.*.label'  => 'required|string|max:255',
@@ -214,6 +225,8 @@ class InvoiceController extends Controller
             'panjar'                  => 'nullable|numeric|min:0',
             'include_tax'             => 'nullable|boolean',
             'tax_percentage'          => 'nullable|numeric|min:0|max:100',
+            'taxable_sections'        => 'nullable|array',
+            'taxable_sections.*'      => 'integer|min:0|max:2',
         ]);
 
         // Generate new nota number for same order
@@ -224,6 +237,7 @@ class InvoiceController extends Controller
             'order_id'          => $invoice->order_id,
             'nota_number'       => $nota['nota'],
             'invoice_title'     => $request->invoice_title,
+            'invoice_type'      => $request->invoice_type,
             'vessel_name'       => $request->vessel_name,
             'vessel_date'       => $request->vessel_date,
             'destination'       => $request->destination,
@@ -237,6 +251,7 @@ class InvoiceController extends Controller
             'panjar'            => $request->panjar ?? 0,
             'include_tax'       => $request->boolean('include_tax'),
             'tax_percentage'    => $request->tax_percentage ?? 1.1,
+            'taxable_sections'  => $request->taxable_sections ?? [],
             'created_by'        => auth()->id(),
         ]);
 

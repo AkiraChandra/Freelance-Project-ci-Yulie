@@ -14,6 +14,7 @@ class Invoice extends Model
         'order_id',
         'nota_number',
         'invoice_title',
+        'invoice_type',
         'vessel_name',
         'vessel_date',
         'destination',
@@ -27,15 +28,17 @@ class Invoice extends Model
         'panjar',
         'include_tax',
         'tax_percentage',
+        'taxable_sections',
         'created_by',
     ];
 
     protected $casts = [
-        'sections'       => 'array',
-        'panjar'         => 'decimal:2',
-        'include_tax'    => 'boolean',
-        'tax_percentage' => 'decimal:2',
-        'revision'       => 'integer',
+        'sections'         => 'array',
+        'taxable_sections' => 'array',
+        'panjar'           => 'decimal:2',
+        'include_tax'      => 'boolean',
+        'tax_percentage'   => 'decimal:2',
+        'revision'         => 'integer',
     ];
 
     public function creator()
@@ -102,12 +105,23 @@ class Invoice extends Model
     }
 
     /**
-     * Tax amount.
+     * Tax amount - calculated only from selected taxable sections.
+     * Section 0 (Reimbursement) is never included.
+     * Only sections 1 (Detail Invoice) and/or 2 (Trucking) can be taxed.
      */
     public function getTaxAmountAttribute(): float
     {
         if (!$this->include_tax) return 0;
-        return $this->grand_total * ($this->tax_percentage / 100);
+        
+        $taxableSections = $this->taxable_sections ?? [];
+        if (empty($taxableSections)) return 0;
+        
+        $taxableTotal = 0;
+        foreach ($taxableSections as $sectionIndex) {
+            $taxableTotal += $this->sectionSubtotal($sectionIndex);
+        }
+        
+        return $taxableTotal * ($this->tax_percentage / 100);
     }
 
     /**
