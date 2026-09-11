@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 
 class OwnerAssignmentController extends Controller
 {
-    /**
-     * Pending assignments waiting for owner review.
-     */
     public function index()
     {
         $assignments = OperationalStaffAssignment::with('operationalStaff', 'assignedBy')
@@ -21,9 +18,6 @@ class OwnerAssignmentController extends Controller
         return view('owner-assignments.index', compact('assignments'));
     }
 
-    /**
-     * History: accepted and declined assignments.
-     */
     public function history()
     {
         $assignments = OperationalStaffAssignment::with('operationalStaff', 'assignedBy', 'reviewedBy')
@@ -38,9 +32,6 @@ class OwnerAssignmentController extends Controller
         return view('owner-assignments.history', compact('assignments'));
     }
 
-    /**
-     * Approve a pending assignment.
-     */
     public function approve(OperationalStaffAssignment $assignment)
     {
         abort_if(!$assignment->isRequest(), 403, 'Penugasan ini sudah difinalisasi.');
@@ -55,9 +46,6 @@ class OwnerAssignmentController extends Controller
             ->with('success', 'Penugasan berhasil disetujui!');
     }
 
-    /**
-     * Decline a pending assignment.
-     */
     public function decline(Request $request, OperationalStaffAssignment $assignment)
     {
         abort_if(!$assignment->isRequest(), 403, 'Penugasan ini sudah difinalisasi.');

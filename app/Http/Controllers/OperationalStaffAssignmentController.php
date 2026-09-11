@@ -17,19 +17,15 @@ class OperationalStaffAssignmentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($assignment) {
-                $assignment->order = $assignment->order; // trigger accessor
+                $assignment->order = $assignment->order;
                 return $assignment;
             });
 
         return view('staff-assignments.index', compact('assignments'));
     }
 
-    /**
-     * Show detailed expense report for a specific order
-     */
     public function showOrderDetail($orderType, $orderId)
     {
-        // Get all assignments for this order
         $assignments = OperationalStaffAssignment::with(['operationalStaff', 'expenses' => function($query) {
                 $query->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc');
             }])
@@ -46,7 +42,6 @@ class OperationalStaffAssignmentController extends Controller
                 ->with('error', 'Order tidak ditemukan atau belum ada assignment.');
         }
 
-        // Get order info
         if ($orderType === 'export') {
             $order = ExportOrder::with('customer')->find($orderId);
             $orderNumber = $order->export_order_number ?? 'Unknown';
@@ -55,7 +50,6 @@ class OperationalStaffAssignmentController extends Controller
             $orderNumber = $order->import_order_number ?? 'Unknown';
         }
 
-        // Calculate totals
         $grandTotal = $assignments->sum(function($assignment) {
             return $assignment->expenses->sum('amount');
         });
@@ -69,8 +63,6 @@ class OperationalStaffAssignmentController extends Controller
         $exportOrders = ExportOrder::with('customer')->orderBy('export_order_number')->get();
         $importOrders = ImportOrder::with('customer')->orderBy('import_order_number')->get();
 
-        // Build a map: { staffId: { export: [orderId,...], import: [orderId,...] } }
-        // Only include active (request/accepted) assignments — declined can be re-assigned
         $assignedMap = OperationalStaffAssignment::whereIn('status', [
                 \App\Models\OperationalStaffAssignment::STATUS_REQUEST,
                 \App\Models\OperationalStaffAssignment::STATUS_ACCEPTED,
@@ -97,7 +89,6 @@ class OperationalStaffAssignmentController extends Controller
             'order_id.required'             => 'Order wajib dipilih.',
         ]);
 
-        // Validate order exists
         if ($request->order_type === 'export') {
             $orderExists = ExportOrder::where('id', $request->order_id)->exists();
         } else {
@@ -108,7 +99,6 @@ class OperationalStaffAssignmentController extends Controller
             return back()->withErrors(['order_id' => 'Order yang dipilih tidak ditemukan.'])->withInput();
         }
 
-        // Validate staff has not been assigned to this exact order before (ignore declined — can be re-assigned)
         $alreadyAssigned = OperationalStaffAssignment::where('operational_staff_id', $request->operational_staff_id)
             ->where('order_type', $request->order_type)
             ->where('order_id', $request->order_id)
@@ -130,7 +120,7 @@ class OperationalStaffAssignmentController extends Controller
             'operational_staff_id' => $request->operational_staff_id,
             'order_type'           => $request->order_type,
             'order_id'             => $request->order_id,
-            'fee'                  => 0, // Default 0, nanti diisi via expenses
+            'fee'                  => 0,
             'notes'                => null,
             'assigned_by'          => auth()->id(),
         ]);

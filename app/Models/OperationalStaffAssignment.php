@@ -69,9 +69,6 @@ class OperationalStaffAssignment extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
-    /**
-     * Get the related order (export or import).
-     */
     public function getOrderAttribute()
     {
         if ($this->order_type === 'export') {
@@ -80,17 +77,11 @@ class OperationalStaffAssignment extends Model
         return ImportOrder::find($this->order_id);
     }
 
-    /**
-     * Get all expenses for this assignment.
-     */
     public function expenses()
     {
         return $this->hasMany(OperationalExpense::class, 'assignment_id');
     }
 
-    /**
-     * Get total amount of all expenses.
-     */
     public function getTotalExpensesAttribute()
     {
         return $this->expenses()->sum('amount');

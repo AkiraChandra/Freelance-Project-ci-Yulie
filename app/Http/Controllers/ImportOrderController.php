@@ -8,18 +8,12 @@ use Illuminate\Http\Request;
 
 class ImportOrderController extends Controller
 {
-    /**
-     * Show create form
-     */
     public function create()
     {
         $companies = Company::orderBy('company_code')->get();
         return view('orders.import.create', compact('companies'));
     }
 
-    /**
-     * Store import order
-     */
     public function store(Request $request)
     {
         $request->validate([

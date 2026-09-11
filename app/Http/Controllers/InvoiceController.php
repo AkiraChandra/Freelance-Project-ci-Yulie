@@ -10,28 +10,21 @@ use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    /**
-     * List all invoices.
-     */
     public function index()
     {
         $invoices = Invoice::with('creator')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($invoice) {
-                $invoice->order; // trigger accessor
+                $invoice->order;
                 return $invoice;
             });
 
         return view('invoices.index', compact('invoices'));
     }
 
-    /**
-     * Show create form — optionally pre-select order.
-     */
     public function create(Request $request)
     {
-        // Get IDs of orders that already have invoices
         $usedImportIds = Invoice::where('order_type', 'import')->pluck('order_id')->toArray();
         $usedExportIds = Invoice::where('order_type', 'export')->pluck('order_id')->toArray();
 
@@ -48,9 +41,6 @@ class InvoiceController extends Controller
         return view('invoices.create', compact('importOrders', 'exportOrders', 'selectedOrderType', 'selectedOrderId'));
     }
 
-    /**
-     * Store a new invoice.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -78,7 +68,6 @@ class InvoiceController extends Controller
             'taxable_sections.*'      => 'integer|min:0|max:2',
         ]);
 
-        // Verify order exists
         if ($request->order_type === 'import') {
             $exists = ImportOrder::where('id', $request->order_id)->exists();
         } else {
@@ -89,7 +78,6 @@ class InvoiceController extends Controller
             return back()->withErrors(['order_id' => 'Order tidak ditemukan.'])->withInput();
         }
 
-        // Generate nota number
         $nota = Invoice::generateNotaNumber($request->order_type, $request->order_id);
 
         $invoice = Invoice::create([
@@ -119,28 +107,18 @@ class InvoiceController extends Controller
             ->with('success', 'Invoice berhasil dibuat!');
     }
 
-    /**
-     * Show invoice detail.
-     */
     public function show(Invoice $invoice)
     {
-        $invoice->order; // trigger accessor
+        $invoice->order;
         return view('invoices.show', compact('invoice'));
     }
 
-    /**
-     * Edit form — only allows editing existing row values (label/amount), not add/remove.
-     */
     public function edit(Invoice $invoice)
     {
-        $invoice->order; // trigger accessor
+        $invoice->order;
         return view('invoices.edit', compact('invoice'));
     }
 
-    /**
-     * Update invoice — only update existing rows (labels, amounts), header fields, tax, panjar.
-     * Cannot change order, cannot add/remove items.
-     */
     public function update(Request $request, Invoice $invoice)
     {
         $request->validate([
@@ -188,12 +166,9 @@ class InvoiceController extends Controller
             ->with('success', 'Invoice berhasil diupdate!');
     }
 
-    /**
-     * Create a revision invoice (susulan) — uses edit view with full add/remove capability.
-     */
     public function createRevision(Invoice $invoice)
     {
-        $invoice->order; // trigger accessor
+        $invoice->order;
 
         return view('invoices.edit', [
             'invoice'    => $invoice,
@@ -201,9 +176,6 @@ class InvoiceController extends Controller
         ]);
     }
 
-    /**
-     * Store a revision invoice as a new record with a new nota number.
-     */
     public function storeRevision(Request $request, Invoice $invoice)
     {
         $request->validate([
@@ -229,7 +201,6 @@ class InvoiceController extends Controller
             'taxable_sections.*'      => 'integer|min:0|max:2',
         ]);
 
-        // Generate new nota number for same order
         $nota = Invoice::generateNotaNumber($invoice->order_type, $invoice->order_id);
 
         $newInvoice = Invoice::create([
@@ -259,9 +230,6 @@ class InvoiceController extends Controller
             ->with('success', 'Invoice revisi (susulan) berhasil dibuat! Nota: ' . $nota['nota']);
     }
 
-    /**
-     * Delete invoice.
-     */
     public function destroy(Invoice $invoice)
     {
         $invoice->delete();
@@ -269,14 +237,10 @@ class InvoiceController extends Controller
             ->with('success', 'Invoice berhasil dihapus!');
     }
 
-    /**
-     * Generate PDF for specific sections.
-     */
     public function generatePdf(Request $request, Invoice $invoice)
     {
-        $invoice->order; // trigger accessor
+        $invoice->order;
 
-        // Which sections to print (default: all)
         $sectionIndices = $request->query('sections');
         if ($sectionIndices !== null) {
             $sectionIndices = array_map('intval', explode(',', $sectionIndices));

@@ -46,11 +46,6 @@ class Invoice extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Generate nota number based on existing invoices for this order.
-     * First invoice: same as order number (e.g. 26161/IMP/001)
-     * Subsequent:   order number + A, B, C... (e.g. 26161/IMP/001A)
-     */
     public static function generateNotaNumber(string $orderType, int $orderId): array
     {
         $order = $orderType === 'import'
@@ -69,7 +64,7 @@ class Invoice extends Model
             return ['nota' => $baseNumber, 'revision' => 0];
         }
 
-        $suffix = chr(64 + $existingCount); // 1=A, 2=B, 3=C ...
+        $suffix = chr(64 + $existingCount);
         return ['nota' => $baseNumber . $suffix, 'revision' => $existingCount];
     }
 
@@ -81,9 +76,6 @@ class Invoice extends Model
         return ExportOrder::with('customer')->find($this->order_id);
     }
 
-    /**
-     * Calculate subtotal for a specific section index.
-     */
     public function sectionSubtotal(int $index): float
     {
         $sections = $this->sections ?? [];
@@ -91,9 +83,6 @@ class Invoice extends Model
         return collect($sections[$index]['items'] ?? [])->sum('amount');
     }
 
-    /**
-     * Grand total of all sections.
-     */
     public function getGrandTotalAttribute(): float
     {
         $sections = $this->sections ?? [];
@@ -104,46 +93,32 @@ class Invoice extends Model
         return $total;
     }
 
-    /**
-     * Tax amount - calculated only from selected taxable sections.
-     * Section 0 (Reimbursement) is never included.
-     * Only sections 1 (Detail Invoice) and/or 2 (Trucking) can be taxed.
-     */
     public function getTaxAmountAttribute(): float
     {
         if (!$this->include_tax) return 0;
-        
+
         $taxableSections = $this->taxable_sections ?? [];
         if (empty($taxableSections)) return 0;
-        
+
         $taxableTotal = 0;
         foreach ($taxableSections as $sectionIndex) {
             $taxableTotal += $this->sectionSubtotal($sectionIndex);
         }
-        
+
         return $taxableTotal * ($this->tax_percentage / 100);
     }
 
-    /**
-     * Jumlah Tagihan Keseluruhan (grand total + tax).
-     */
     public function getTotalBillingAttribute(): float
     {
         return $this->grand_total + $this->tax_amount;
     }
 
-    /**
-     * Total Tagihan (after panjar deduction).
-     */
     public function getTotalAfterPanjarAttribute(): float
     {
         return $this->total_billing - $this->panjar;
     }
 
-    /**
-     * Convert number to Indonesian words (terbilang).
-     */
-    public static function terbilang(float $number): string
+    public static functionterbilang(float $number): string
     {
         $number = abs($number);
         $words  = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];

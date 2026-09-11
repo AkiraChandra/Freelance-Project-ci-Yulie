@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    // ─── Index ──────────────────────────────────────────────────────────────────
-
     public function index()
     {
         $importOrders = ImportOrder::with('customer', 'creator')
@@ -25,14 +23,10 @@ class OrderController extends Controller
         return view('orders.index', compact('importOrders', 'exportOrders'));
     }
 
-    // ─── Select Type ────────────────────────────────────────────────────────────
-
     public function selectType()
     {
         return view('orders.select-type');
     }
-
-    // ─── IMPORT ─────────────────────────────────────────────────────────────────
 
     public function createImport()
     {
@@ -69,7 +63,6 @@ class OrderController extends Controller
             $seq = ImportOrder::where('customer_id', $customer->id)->count() + 1;
             $orderNumber = $customer->customer_code . '/IMP/' . str_pad($seq, 3, '0', STR_PAD_LEFT);
 
-            // Create Order first
             $order = Order::create([
                 'order_code' => $orderNumber,
                 'type' => 'import',
@@ -78,7 +71,6 @@ class OrderController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-            // Create ImportOrder
             $importOrder = ImportOrder::create([
                 'order_id'              => $order->id,
                 'customer_id'           => $customer->id,
@@ -106,7 +98,6 @@ class OrderController extends Controller
                 'created_by'            => auth()->id(),
             ]);
 
-            // Handle Containers
             $this->saveContainers($order->id, 'import', $request);
 
             DB::commit();
@@ -158,7 +149,6 @@ class OrderController extends Controller
                 'issue', 'status',
             ]));
 
-            // Update containers
             if ($importOrder->order_id) {
                 $this->saveContainers($importOrder->order_id, 'import', $request);
             }
@@ -180,8 +170,6 @@ class OrderController extends Controller
         return redirect()->route('orders.index')
             ->with('success', "Order Impor {$number} berhasil dihapus!");
     }
-
-    // ─── EXPORT ─────────────────────────────────────────────────────────────────
 
     public function createExport()
     {
@@ -218,7 +206,6 @@ class OrderController extends Controller
             $seq = ExportOrder::where('customer_id', $customer->id)->count() + 1;
             $orderNumber = $customer->customer_code . '/EXP/' . str_pad($seq, 3, '0', STR_PAD_LEFT);
 
-            // Create Order first
             $order = Order::create([
                 'order_code' => $orderNumber,
                 'type' => 'export',
@@ -227,7 +214,6 @@ class OrderController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-            // Create ExportOrder
             ExportOrder::create([
                 'order_id'            => $order->id,
                 'customer_id'         => $customer->id,
@@ -249,7 +235,6 @@ class OrderController extends Controller
                 'created_by'          => auth()->id(),
             ]);
 
-            // Handle Containers
             $this->saveContainers($order->id, 'export', $request);
 
             DB::commit();
@@ -300,7 +285,6 @@ class OrderController extends Controller
                 'pickup_date', 'return_date', 'issue', 'status',
             ]));
 
-            // Update containers
             if ($exportOrder->order_id) {
                 $this->saveContainers($exportOrder->order_id, 'export', $request);
             }
@@ -323,70 +307,68 @@ class OrderController extends Controller
             ->with('success', "Order Ekspor {$number} berhasil dihapus!");
     }
 
-    // ─── HELPER METHODS ─────────────────────────────────────────────────────────
-
-    /**
-     * Save containers for an order
-     */
     protected function saveContainers($orderId, $orderType, Request $request)
     {
-        // Delete existing containers for this order
         OrderContainer::where('order_id', $orderId)->where('order_type', $orderType)->delete();
 
         $containerSize = $request->input('container_size');
-        
-        // Handle LCL Type
+
         if ($containerSize === 'LCL') {
             $quantity = $request->input('container_quantity', 1);
             for ($i = 0; $i < $quantity; $i++) {
                 OrderContainer::create([
                     'order_id' => $orderId,
                     'order_type' => $orderType,
+                    'container_group' => 1,
                     'container_size' => 'LCL',
                     'container_number' => null,
                     'container_type' => null,
                     'vendor' => $request->input('lcl_vendor'),
                     'combo_with' => null,
-                    'combine_with' => null,
+                    'combine_with_container_id' => null,
                 ]);
             }
             return;
         }
 
-        // Handle Non-LCL (20', 40') - Multiple Containers with Details
         $containers = $request->input('containers', []);
         if (empty($containers)) {
             return;
         }
 
-        // First pass: Create all containers without combo relationships
         $containerMap = [];
         foreach ($containers as $index => $containerData) {
+            $containerNumber = trim((string) ($containerData['number'] ?? ''));
             $container = OrderContainer::create([
                 'order_id' => $orderId,
                 'order_type' => $orderType,
+                'container_group' => $index + 1,
                 'container_size' => $containerSize,
-                'container_number' => $containerData['number'] ?? null,
+                'container_number' => $containerNumber !== '' ? $containerNumber : null,
                 'container_type' => $containerData['type'] ?? null,
                 'vendor' => $containerData['vendor'] ?? null,
-                'combo_with' => null, // Will be updated in second pass
-                'combine_with' => $containerData['combine'] ?? null,
+                'combo_with' => null,
+                'combine_with_container_id' => null,
             ]);
-            
-            // Map container number to container ID for combo resolution
-            if (!empty($containerData['number'])) {
-                $containerMap[$containerData['number']] = $container->id;
+
+            if ($containerNumber !== '') {
+                $containerMap[$containerNumber] = $container->id;
             }
         }
 
-        // Second pass: Update combo relationships
         foreach ($containers as $containerData) {
-            if (!empty($containerData['combo']) && !empty($containerData['number'])) {
-                $comboContainerNumber = $containerData['combo'];
-                if (isset($containerMap[$comboContainerNumber]) && isset($containerMap[$containerData['number']])) {
-                    OrderContainer::where('id', $containerMap[$containerData['number']])
-                        ->update(['combo_with' => $containerMap[$comboContainerNumber]]);
-                }
+            $containerNumber = trim((string) ($containerData['number'] ?? ''));
+            $comboContainerNumber = trim((string) ($containerData['combo'] ?? ''));
+            $combineContainerNumber = trim((string) ($containerData['combine'] ?? ''));
+
+            if ($containerNumber !== '' && $comboContainerNumber !== '' && isset($containerMap[$comboContainerNumber])) {
+                OrderContainer::where('id', $containerMap[$containerNumber])
+                    ->update(['combo_with' => $containerMap[$comboContainerNumber]]);
+            }
+
+            if ($containerNumber !== '' && $combineContainerNumber !== '' && isset($containerMap[$combineContainerNumber])) {
+                OrderContainer::where('id', $containerMap[$containerNumber])
+                    ->update(['combine_with_container_id' => $containerMap[$combineContainerNumber]]);
             }
         }
     }

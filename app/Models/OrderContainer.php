@@ -18,60 +18,55 @@ class OrderContainer extends Model
         'container_type',
         'vendor',
         'combo_with',
+        'combine_with',
         'combine_with_container_id',
     ];
 
-    /**
-     * Relasi ke Order
-     */
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    /**
-     * Relasi ke container yang di-combo (same order, same group, same type)
-     */
     public function comboContainer()
     {
         return $this->belongsTo(OrderContainer::class, 'combo_with');
     }
 
-    /**
-     * Relasi ke containers yang combo dengan container ini
-     */
     public function comboCombinations()
     {
         return $this->hasMany(OrderContainer::class, 'combo_with');
     }
 
-    /**
-     * Relasi ke container yang di-combine (different order, same size, same vendor, same type)
-     */
     public function combineWithContainer()
     {
         return $this->belongsTo(OrderContainer::class, 'combine_with_container_id');
     }
 
-    /**
-     * Relasi ke containers yang combine dengan container ini
-     */
+    public function canCombineWith(self $otherContainer): bool
+    {
+        if ($this->order_id === $otherContainer->order_id && $this->order_type === $otherContainer->order_type) {
+            return false;
+        }
+
+        return $this->container_size === $otherContainer->container_size
+            && $this->vendor === $otherContainer->vendor
+            && $this->container_type === $otherContainer->container_type
+            && ($this->order->customer_id ?? null) === ($otherContainer->order->customer_id ?? null)
+            && trim((string) $this->container_number) !== ''
+            && trim((string) $otherContainer->container_number) !== ''
+            && trim((string) $this->container_number) === trim((string) $otherContainer->container_number);
+    }
+
     public function combineCombinations()
     {
         return $this->hasMany(OrderContainer::class, 'combine_with_container_id');
     }
 
-    /**
-     * Get combo container number
-     */
     public function getComboContainerNumberAttribute()
     {
         return $this->comboContainer ? $this->comboContainer->container_number : null;
     }
 
-    /**
-     * Scope untuk filter by order type
-     */
     public function scopeImport($query)
     {
         return $query->where('order_type', 'import');
@@ -82,18 +77,11 @@ class OrderContainer extends Model
         return $query->where('order_type', 'export');
     }
 
-    /**
-     * Scope untuk filter by container group
-     */
     public function scopeGroup($query, $group)
     {
         return $query->where('container_group', $group);
     }
 
-    /**
-     * Get available containers for combine (on going orders with matching criteria)
-     * Status: on going, Same size, Same vendor, Same type, Different order
-     */
     public static function getAvailableForCombine($currentOrderId, $containerSize, $vendor, $containerType)
     {
         return self::whereHas('order', function ($query) use ($currentOrderId) {

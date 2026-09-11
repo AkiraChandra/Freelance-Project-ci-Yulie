@@ -2,7 +2,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-            {{ $isRevision ? 'Buat Invoice Revisi (Susulan) — dari ' . $invoice->nota_number : 'Edit Invoice — ' . $invoice->nota_number }}
+            {{ $isRevision ? 'Buat Invoice Susulan — dari ' . $invoice->nota_number : 'Edit Invoice — ' . $invoice->nota_number }}
         </h2>
     </x-slot>
 
@@ -22,13 +22,13 @@
             {{-- Info banner --}}
             @if ($isRevision)
                 <div class="mb-6 bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-lg">
-                    <p class="font-semibold">Mode Revisi (Susulan)</p>
-                    <p class="text-sm">Invoice baru akan dibuat dengan nota number baru (suffix A, B, C...). Anda bisa menambah, menghapus, atau mengubah section dan baris.</p>
+                    <p class="font-semibold">Mode Invoice Susulan</p>
+                    <p class="text-sm">Invoice baru akan dibuat dengan nomor yang mengikuti pola susulan. Anda bisa menambah, menghapus, atau mengubah section dan baris.</p>
                 </div>
             @else
                 <div class="mb-6 bg-amber-50 border-l-4 border-amber-400 text-amber-800 p-4 rounded-lg">
                     <p class="font-semibold">Mode Edit</p>
-                    <p class="text-sm">Anda hanya bisa mengubah nilai baris yang sudah ada (label & amount). Untuk menambah atau menghapus baris, gunakan tombol <strong>"Buat Invoice Revisi"</strong> di halaman detail.</p>
+                    <p class="text-sm">Anda hanya bisa mengubah nilai baris yang sudah ada (label & amount). Untuk menambah atau menghapus baris, gunakan tombol <strong>"Buat Invoice Susulan"</strong> di halaman detail.</p>
                 </div>
             @endif
 
@@ -63,11 +63,10 @@
                         <h3 class="text-lg font-bold text-gray-900 mb-4">📄 Judul Invoice</h3>
                         <select name="invoice_title" x-model="invoiceTitle" required
                             class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
-                            <option value="">-- Pilih Tipe Invoice --</option>
-                            <option value="Reimbursement">Reimbursement</option>
+                            <option value="">-- Pilih Judul Invoice --</option>
                             <option value="Invoice">Invoice</option>
                         </select>
-                        <input type="hidden" name="invoice_type" :value="invoiceTitle === 'Reimbursement' ? 'reimbursement' : 'invoice'">
+                        <input type="hidden" name="invoice_type" value="invoice">
                     </div>
 
                     {{-- Editable Header Fields --}}
@@ -311,7 +310,6 @@
 
     <script>
         function invoiceEditForm() {
-            // Ensure sections have fixed 3 sections with proper names
             let initialSections = @json($invoice->sections);
             const sectionNames = ['Reimbursement', 'Detail Invoice', 'Trucking'];
             

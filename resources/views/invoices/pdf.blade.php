@@ -236,7 +236,9 @@
         <tr>
             <td style="width:55%; vertical-align:top;">
                 <p class="b">NB: Nota belum termasuk biaya Dangerous Cargo</p>
-                <p class="b">akan segera di tagih.</p>
+                @if (!empty(trim((string)($order->issue ?? ''))))
+                    <p class="b" style="margin-top:8px;">Notes: {{ $order->issue }}</p>
+                @endif
                 <br>
                 <p>Lampiran:</p>
                 <p>{{ $notaNumber }}</p>

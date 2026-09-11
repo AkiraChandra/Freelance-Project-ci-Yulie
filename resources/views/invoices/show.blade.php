@@ -28,7 +28,7 @@
                     <p class="text-gray-500 text-sm">Dibuat {{ $invoice->created_at->format('d M Y, H:i') }} oleh {{ $invoice->creator->name ?? '-' }}</p>
                     @if ($invoice->revision > 0)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 mt-1">
-                            Revisi ke-{{ $invoice->revision }}
+                            Invoice Susulan ke-{{ $invoice->revision }}
                         </span>
                     @endif
                 </div>
@@ -39,7 +39,7 @@
                     </a>
                     <a href="{{ route('invoices.revision', $invoice) }}"
                         class="inline-flex items-center px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-lg transition-colors shadow">
-                        Buat Invoice Revisi (Susulan)
+                        Buat Invoice Susulan
                     </a>
                     <div class="relative">
                         <button @click="showPdfOptions = !showPdfOptions"

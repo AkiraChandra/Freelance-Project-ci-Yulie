@@ -174,8 +174,8 @@
                                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
                                                 <option value="">-- Tidak Combo --</option>
                                                 <template x-for="(c, idx) in group.containers" :key="idx">
-                                                    <option x-show="idx !== containerIndex && c.type === container.type && c.number" 
-                                                        :value="idx" 
+                                                    <option x-show="idx !== containerIndex && c.type === container.type && c.number"
+                                                        :value="c.number"
                                                         x-text="'Container #' + (idx + 1) + ' - ' + c.number">
                                                     </option>
                                                 </template>
@@ -188,11 +188,16 @@
                                             <label class="block text-sm font-bold text-gray-900 mb-2">
                                                 Combine dengan Order Lain (Opsional)
                                             </label>
-                                            <select x-model="container.combine" 
+                                            <select x-model="container.combine"
                                                 :name="'groups['+groupIndex+'][containers]['+containerIndex+'][combine]'"
                                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
                                                 <option value="">-- Tidak Combine --</option>
-                                                <!-- Available containers akan di-load via AJAX atau dari backend -->
+                                                <template x-for="(c, idx) in group.containers" :key="idx">
+                                                    <option x-show="idx !== containerIndex && c.type === container.type && c.number"
+                                                        :value="c.number"
+                                                        x-text="'Container #' + (idx + 1) + ' - ' + c.number">
+                                                    </option>
+                                                </template>
                                             </select>
                                             <p class="text-xs text-gray-600 mt-1.5 italic">🔗 Hanya order <strong>ON GOING</strong> dengan container size, vendor & type yang sama</p>
                                         </div>
@@ -222,13 +227,14 @@ function containerGroupsManager() {
         storageKey: 'container_data_{{ $orderId ?? "create" }}',
         
         init() {
-            // Try to load from localStorage first
-            const savedData = localStorage.getItem(this.storageKey);
-            
             @if(isset($existingGroups) && count($existingGroups) > 0)
-                // Editing existing order - use server data
+                // Editing existing order - use server data and clear stale cached form data from previous attempts
                 this.groups = @json($existingGroups);
+                localStorage.removeItem(this.storageKey);
             @else
+                // Try to load from localStorage first
+                const savedData = localStorage.getItem(this.storageKey);
+
                 if (savedData) {
                     // Load dari localStorage jika ada (user pernah isi sebelum refresh)
                     try {
@@ -255,7 +261,9 @@ function containerGroupsManager() {
             
             // Auto-save ke localStorage setiap kali data berubah
             this.$watch('groups', (value) => {
-                localStorage.setItem(this.storageKey, JSON.stringify(value));
+                if (!this.storageKey || this.storageKey.includes('create')) {
+                    localStorage.setItem(this.storageKey, JSON.stringify(value));
+                }
             });
         },
         

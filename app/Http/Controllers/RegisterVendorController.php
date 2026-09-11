@@ -8,18 +8,12 @@ use Illuminate\Http\Request;
 
 class RegisterVendorController extends Controller
 {
-    /**
-     * Show the vendor management page
-     */
     public function index()
     {
         $vendors = Vendor::with('prices')->orderBy('created_at', 'desc')->paginate(10);
         return view('vendor.register', compact('vendors'));
     }
 
-    /**
-     * Store a new vendor with prices
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -56,27 +50,18 @@ class RegisterVendorController extends Controller
         }
     }
 
-    /**
-     * Show vendor detail with prices
-     */
     public function show(Vendor $vendor)
     {
         $vendor->load('prices');
         return view('vendor.show', compact('vendor'));
     }
 
-    /**
-     * Show vendor edit form
-     */
     public function edit(Vendor $vendor)
     {
         $vendor->load('prices');
         return view('vendor.edit', compact('vendor'));
     }
 
-    /**
-     * Update vendor
-     */
     public function update(Request $request, Vendor $vendor)
     {
         $validated = $request->validate([
@@ -97,7 +82,6 @@ class RegisterVendorController extends Controller
                 'status' => $validated['status'],
             ]);
 
-            // Update or create prices
             $priceIds = [];
             foreach ($validated['prices'] as $price) {
                 if (isset($price['id']) && $price['id']) {
@@ -122,7 +106,6 @@ class RegisterVendorController extends Controller
                 }
             }
 
-            // Delete prices not in the update
             VendorPrice::where('vendor_id', $vendor->id)
                 ->whereNotIn('id', $priceIds)
                 ->delete();
@@ -133,9 +116,6 @@ class RegisterVendorController extends Controller
         }
     }
 
-    /**
-     * Delete vendor
-     */
     public function destroy(Vendor $vendor)
     {
         try {
@@ -146,9 +126,6 @@ class RegisterVendorController extends Controller
         }
     }
 
-    /**
-     * Delete vendor price
-     */
     public function destroyPrice(VendorPrice $vendorPrice)
     {
         try {

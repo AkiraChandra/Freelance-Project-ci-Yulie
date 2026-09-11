@@ -57,7 +57,7 @@
                                                 {{ $invoice->nota_number ?? '-' }}
                                             </span>
                                             @if ($invoice->revision > 0)
-                                                <span class="ml-1 text-xs text-amber-600 font-medium">(Rev {{ $invoice->revision }})</span>
+                                                <span class="ml-1 text-xs text-amber-600 font-medium">(Susulan {{ $invoice->revision }})</span>
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-gray-700 text-xs">

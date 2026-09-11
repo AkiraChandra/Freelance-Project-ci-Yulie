@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-            {{ isset($parentInvoice) ? 'Buat Invoice Revisi (Susulan)' : 'Buat Invoice Baru' }}
+            {{ isset($parentInvoice) ? 'Buat Invoice Susulan' : 'Buat Invoice Baru' }}
         </h2>
     </x-slot>
 
@@ -20,8 +20,8 @@
 
             @if (isset($parentInvoice))
                 <div class="mb-6 bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-lg">
-                    <p class="font-semibold">Invoice Revisi dari: {{ $parentInvoice->nota_number }}</p>
-                    <p class="text-sm">Nota number baru akan di-generate otomatis dengan suffix berikutnya.</p>
+                    <p class="font-semibold">Invoice Susulan dari: {{ $parentInvoice->nota_number }}</p>
+                    <p class="text-sm">Nomor susulan akan dibuat otomatis untuk data baru yang dicetak sebagai revisi terbaru.</p>
                 </div>
             @endif
 
@@ -77,11 +77,10 @@
                         <h3 class="text-lg font-bold text-gray-900 mb-4">📄 Judul Invoice</h3>
                         <select name="invoice_title" x-model="invoiceTitle" required
                             class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
-                            <option value="">-- Pilih Tipe Invoice --</option>
-                            <option value="Reimbursement">Reimbursement</option>
+                            <option value="">-- Pilih Judul Invoice --</option>
                             <option value="Invoice">Invoice</option>
                         </select>
-                        <input type="hidden" name="invoice_type" :value="invoiceTitle === 'Reimbursement' ? 'reimbursement' : 'invoice'">
+                        <input type="hidden" name="invoice_type" value="invoice">
                     </div>
 
                     {{-- Editable Header Fields --}}

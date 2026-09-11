@@ -7,26 +7,17 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    /**
-     * Display list of companies
-     */
     public function index()
     {
         $companies = Company::orderBy('company_code')->get();
         return view('companies.index', compact('companies'));
     }
 
-    /**
-     * Show create form
-     */
     public function create()
     {
         return view('companies.create');
     }
 
-    /**
-     * Store company
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -37,7 +28,6 @@ class CompanyController extends Controller
             'address' => 'nullable|string',
         ]);
 
-        // Generate company code
         $lastCompany = Company::orderBy('id', 'desc')->first();
         $nextCode = ($lastCompany ? (int)$lastCompany->company_code : 0) + 1;
         $companyCode = str_pad($nextCode, 6, '0', STR_PAD_LEFT);
@@ -55,17 +45,11 @@ class CompanyController extends Controller
         return redirect()->route('companies.index')->with('success', "Perusahaan {$request->company_name} berhasil ditambahkan!");
     }
 
-    /**
-     * Show edit form
-     */
     public function edit(Company $company)
     {
         return view('companies.edit', compact('company'));
     }
 
-    /**
-     * Update company
-     */
     public function update(Request $request, Company $company)
     {
         $request->validate([
@@ -81,9 +65,6 @@ class CompanyController extends Controller
         return redirect()->route('companies.index')->with('success', "Perusahaan berhasil diupdate!");
     }
 
-    /**
-     * Delete company
-     */
     public function destroy(Company $company)
     {
         $companyName = $company->company_name;
