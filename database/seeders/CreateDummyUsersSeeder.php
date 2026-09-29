@@ -15,39 +15,57 @@ class CreateDummyUsersSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles first if they don't exist
+        // Get roles
         $ownerRole = Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'web']);
-        $staffAccRole = Role::firstOrCreate(['name' => 'staff-accounting', 'guard_name' => 'web']);
+        $accountantRole = Role::firstOrCreate(['name' => 'staff-accounting', 'guard_name' => 'web']);
         $staffRole = Role::firstOrCreate(['name' => 'staff', 'guard_name' => 'web']);
 
-        // Owner
-        $owner = User::create([
-            'name' => 'Owner',
-            'email' => 'akira.chandra@binus.ac.id',
-            'password' => Hash::make('87654321'),
-            'status' => 'approved',
-            'role_id' => 1,
-        ]);
-        $owner->assignRole($ownerRole);
+        // ============================================
+        // USER: Owner
+        // Full access - can see all data
+        // Password: 87654321
+        // ============================================
+        $ownerUser = User::firstOrCreate(
+            ['email' => 'akira.chandra@binus.ac.id'],
+            [
+                'name' => 'Owner',
+                'password' => Hash::make('87654321'),
+                'status' => 'approved',
+                'role_id' => 1,
+            ]
+        );
+        $ownerUser->assignRole($ownerRole);
 
-        // Staff Accounting
-        $staffAcc = User::create([
-            'name' => 'Staff Accounting',
-            'email' => 'akirasanchandra2@gmail.com',
-            'password' => Hash::make('87654321'),
-            'status' => 'approved',
-            'role_id' => 2,
-        ]);
-        $staffAcc->assignRole($staffAccRole);
+        // ============================================
+        // USER: Accountant (Akuntan)
+        // Can view orders, manage bookkeeping
+        // Password: 87654321
+        // ============================================
+        $accountantUser = User::firstOrCreate(
+            ['email' => 'akirasanchandra2@gmail.com'],
+            [
+                'name' => 'Staff Accounting',
+                'password' => Hash::make('87654321'),
+                'status' => 'approved',
+                'role_id' => 2,
+            ]
+        );
+        $accountantUser->assignRole($accountantRole);
 
-        // Staff Biasa
-        $staff = User::create([
-            'name' => 'Staff Biasa',
-            'email' => 'akira.chandra@binus.edu',
-            'password' => Hash::make('87654321'),
-            'status' => 'approved',
-            'role_id' => 3,
-        ]);
-        $staff->assignRole($staffRole);
+        // ============================================
+        // USER: Staff (Regular Staff)
+        // Can export/import data
+        // Password: 87654321
+        // ============================================
+        $staffUser = User::firstOrCreate(
+            ['email' => 'akira.chandra@binus.edu'],
+            [
+                'name' => 'Staff Biasa',
+                'password' => Hash::make('87654321'),
+                'status' => 'approved',
+                'role_id' => 3,
+            ]
+        );
+        $staffUser->assignRole($staffRole);
     }
 }

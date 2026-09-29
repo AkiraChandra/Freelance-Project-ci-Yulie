@@ -142,6 +142,13 @@
                             <input type="date" name="do_date" id="do_date" value="{{ old('do_date', $importOrder->do_date?->format('Y-m-d')) }}"
                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
                         </div>
+
+                        <div>
+                            <label for="detention_deadline" class="block text-sm font-bold text-gray-700 mb-1">Detention Deadline</label>
+                            <input type="date" name="detention_deadline" id="detention_deadline" value="{{ old('detention_deadline', $importOrder->detention_deadline?->format('Y-m-d')) }}"
+                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all text-sm">
+                            <p class="text-xs text-gray-500 mt-1">Batas akhir pengeluaran/pengembalian container</p>
+                        </div>
                     </div>
                 </div>
 

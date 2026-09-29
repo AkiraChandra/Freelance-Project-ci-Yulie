@@ -17,51 +17,91 @@ class RolePermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
+        // Create permissions - grouped by module
         $permissions = [
+            // Dashboard
             'view-dashboard',
+
+            // User Management
             'manage-users',
-            'manage-accounting',
+            'view-users',
+
+            // Company Management
+            'manage-companies',
+            'view-companies',
+
+            // Customer Management
+            'manage-customers',
+            'view-customers',
+
+            // Order Management (Import & Export)
+            'manage-orders',
+            'view-orders',
+
+            // Bookkeeping / Accounting (Invoice)
+            'manage-bookkeeping',
+            'view-bookkeeping',
+
+            // Vendor Management
+            'manage-vendors',
+            'view-vendors',
+
+            // Operational Staff Management
+            'manage-operational-staffs',
+            'view-operational-staffs',
+
+            // Reports
             'manage-reports',
-            'manage-inventory',
-            'manage-settings',
-            'view-accounting',
             'view-reports',
-            'view-inventory',
+
+            // Export & Import Data
+            'export-data',
+            'import-data',
+
+            // Settings
+            'manage-settings',
+            'view-settings',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Create roles and assign permissions
-
-        // Role: Owner (full access)
-        $owner = Role::create(['name' => 'owner']);
+        // ============================================
+        // ROLE: OWNER (Full Access)
+        // Can see all data and manage everything
+        // ============================================
+        $owner = Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'web']);
         $owner->givePermissionTo(Permission::all());
 
-        // Role: Staff Accounting
-        $staffAccounting = Role::create(['name' => 'staff-accounting']);
-        $staffAccounting->givePermissionTo([
+        // ============================================
+        // ROLE: STAFF ACCOUNTING (Akuntan)
+        // Can view orders, manage bookkeeping/invoices
+        // ============================================
+        $accountant = Role::firstOrCreate(['name' => 'staff-accounting', 'guard_name' => 'web']);
+        $accountant->givePermissionTo([
             'view-dashboard',
-            'manage-accounting',
+            'view-orders',
+            'manage-bookkeeping',
+            'view-bookkeeping',
             'view-reports',
+            'export-data',
         ]);
 
-        // Role: Staff (basic access)
-        $staff = Role::create(['name' => 'staff']);
+        // ============================================
+        // ROLE: STAFF (Regular Staff)
+        // Can view data, export/import data
+        // ============================================
+        $staff = Role::firstOrCreate(['name' => 'staff', 'guard_name' => 'web']);
         $staff->givePermissionTo([
             'view-dashboard',
-        ]);
-
-        // Role: Manager
-        $manager = Role::create(['name' => 'manager']);
-        $manager->givePermissionTo([
-            'view-dashboard',
-            'view-accounting',
-            'manage-reports',
-            'view-reports',
-            'view-inventory',
+            'view-orders',
+            'view-companies',
+            'view-customers',
+            'view-vendors',
+            'view-operational-staffs',
+            'export-data',
+            'import-data',
         ]);
     }
 }

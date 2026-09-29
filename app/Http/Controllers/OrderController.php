@@ -10,6 +10,7 @@ use App\Models\OrderContainer;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -86,9 +87,7 @@ class OrderController extends Controller
                 'party'                 => $request->party,
                 'port'                  => $request->port,
                 'do_date'               => $request->do_date,
-                'container_number'      => $request->container_number,
-                'container_size'        => $request->container_size,
-                'container_quantity'    => $request->container_quantity,
+                'detention_deadline'    => $request->detention_deadline,
                 'demurrage_date'        => $request->demurrage_date,
                 'release_date'          => $request->release_date,
                 'container_return_date' => $request->container_return_date,
@@ -144,7 +143,7 @@ class OrderController extends Controller
             $importOrder->update($request->only([
                 'customer_id', 'order_date', 'bl_number', 'product_name',
                 'shipping_line', 'vessel_name', 'voy_number', 'vessel_arrival_date',
-                'pib_number', 'port', 'do_date',
+                'pib_number', 'port', 'do_date', 'detention_deadline',
                 'demurrage_date', 'release_date', 'container_return_date',
                 'issue', 'status',
             ]));
@@ -226,6 +225,7 @@ class OrderController extends Controller
                 'vessel_name'         => $request->vessel_name,
                 'voy_number'          => $request->voy_number,
                 'closing_date'        => $request->closing_date,
+                'detention_deadline'  => $request->detention_deadline,
                 'peb_number'          => $request->peb_number,
                 'depo'                => $request->depo,
                 'pickup_date'         => $request->pickup_date,
@@ -281,7 +281,7 @@ class OrderController extends Controller
             $exportOrder->update($request->only([
                 'customer_id', 'order_date', 'shipping_number', 'do_number',
                 'product_name', 'shipping_line', 'vessel_name', 'voy_number',
-                'closing_date', 'peb_number', 'depo',
+                'closing_date', 'detention_deadline', 'peb_number', 'depo',
                 'pickup_date', 'return_date', 'issue', 'status',
             ]));
 
@@ -305,6 +305,50 @@ class OrderController extends Controller
         $exportOrder->delete();
         return redirect()->route('orders.index')
             ->with('success', "Order Ekspor {$number} berhasil dihapus!");
+    }
+
+    /**
+     * Update container release and return dates
+     */
+    public function updateContainerDates(Request $request, OrderContainer $container)
+    {
+        $request->validate([
+            'release_date' => 'nullable|date',
+            'return_date'  => 'nullable|date',
+        ], [
+            'release_date.date' => 'Format tanggal tidak valid.',
+            'return_date.date'  => 'Format tanggal tidak valid.',
+        ]);
+
+        // Validate: release_date tidak boleh sebelum do_date
+        $order = $container->order;
+        $doDate = null;
+
+        if ($order) {
+            if ($container->order_type === 'import') {
+                $importOrder = ImportOrder::find($order->id);
+                $doDate = $importOrder ? $importOrder->do_date : null;
+            } else {
+                $exportOrder = ExportOrder::find($order->id);
+                $doDate = $exportOrder ? $exportOrder->closing_date : null;
+            }
+        }
+
+        if ($request->release_date && $doDate) {
+            $releaseDate = Carbon::parse($request->release_date);
+            if ($releaseDate->lt(Carbon::parse($doDate))) {
+                return back()->withErrors([
+                    'release_date' => 'Tgl Pengeluaran tidak boleh sebelum Tgl DO.'
+                ]);
+            }
+        }
+
+        $container->update([
+            'release_date' => $request->release_date,
+            'return_date'  => $request->return_date,
+        ]);
+
+        return back()->with('success', 'Data container berhasil diupdate!');
     }
 
     protected function saveContainers($orderId, $orderType, Request $request)

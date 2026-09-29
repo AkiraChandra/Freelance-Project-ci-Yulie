@@ -37,7 +37,8 @@
         $tonage = $invoice->tonage ?: '-';
         $merk = $invoice->merk ?: ($isImport ? ('INV/No. Pendaftaran : ' . ($order->pib_number ?? '-')) : ('PEB NO. ' . ($order->peb_number ?? '-')));
         $containerNumber = $invoice->container_display ?: ($order->container_number ?? '-');
-        $invoiceTitle = strtoupper($invoice->invoice_title ?? ($isImport ? 'PERINCIAN IMPORT' : 'INVOICE'));
+        // Always use INVOICE as title
+        $invoiceTitle = 'INVOICE';
 
         $allSections = $invoice->sections ?? [];
         $printSections = [];
@@ -235,9 +236,9 @@
     <table style="width:100%; font-size:10pt; margin-top:18px;">
         <tr>
             <td style="width:55%; vertical-align:top;">
-                <p class="b">NB: Nota belum termasuk biaya Dangerous Cargo</p>
+                {{-- NB: Removed "akan segera ditagih" --}}
                 @if (!empty(trim((string)($order->issue ?? ''))))
-                    <p class="b" style="margin-top:8px;">Notes: {{ $order->issue }}</p>
+                    <p class="b" style="margin-top:0;">Notes: {{ $order->issue }}</p>
                 @endif
                 <br>
                 <p>Lampiran:</p>

@@ -21,13 +21,24 @@
                         <h1 class="text-2xl font-bold text-white">Invoice</h1>
                         <p class="text-slate-300 text-sm mt-1">Kelola dan cetak invoice per order</p>
                     </div>
-                    <a href="{{ route('invoices.create') }}"
-                        class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-colors">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Buat Invoice Baru
-                    </a>
+                    <div class="flex flex-wrap gap-3">
+                        @if(auth()->user()->hasRole('owner'))
+                            <a href="{{ route('invoices.delete-requests') }}"
+                                class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl border border-white/20 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Request Hapus
+                            </a>
+                        @endif
+                        <a href="{{ route('invoices.create') }}"
+                            class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-colors">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Buat Invoice Baru
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -42,7 +53,7 @@
                                     <th class="px-4 py-3 font-semibold text-gray-600">Tipe</th>
                                     <th class="px-4 py-3 font-semibold text-gray-600">Customer</th>
                                     <th class="px-4 py-3 font-semibold text-gray-600">Total Tagihan</th>
-                                    <th class="px-4 py-3 font-semibold text-gray-600">Dibuat</th>
+                                    <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
                                     <th class="px-4 py-3 font-semibold text-gray-600 text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -50,8 +61,9 @@
                                 @foreach ($invoices as $invoice)
                                     @php
                                         $order = $invoice->order;
+                                        $hasPendingRequest = $invoice->deleteRequest && $invoice->deleteRequest->status === 'pending';
                                     @endphp
-                                    <tr class="hover:bg-teal-50/50 transition-colors">
+                                    <tr class="hover:bg-teal-50/50 transition-colors {{ $hasPendingRequest ? 'bg-red-50' : '' }}">
                                         <td class="px-4 py-3">
                                             <span class="font-mono font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded text-xs">
                                                 {{ $invoice->nota_number ?? '-' }}
@@ -76,8 +88,12 @@
                                         <td class="px-4 py-3 font-bold text-gray-900">
                                             Rp {{ number_format($invoice->total_after_panjar, 0, ',', '.') }}
                                         </td>
-                                        <td class="px-4 py-3 text-gray-500 text-xs">
-                                            {{ $invoice->created_at->format('d/m/Y') }}
+                                        <td class="px-4 py-3">
+                                            @if($hasPendingRequest)
+                                                <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">Pending Hapus</span>
+                                            @else
+                                                <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">Aktif</span>
+                                            @endif
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <div class="flex items-center justify-center gap-2">
@@ -89,14 +105,6 @@
                                                     class="inline-flex items-center px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium rounded-lg text-xs transition-colors">
                                                     PDF
                                                 </a>
-                                                <form action="{{ route('invoices.destroy', $invoice) }}" method="POST"
-                                                    onsubmit="return confirm('Hapus invoice ini?')">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 font-medium rounded-lg text-xs transition-colors">
-                                                        Hapus
-                                                    </button>
-                                                </form>
                                             </div>
                                         </td>
                                     </tr>

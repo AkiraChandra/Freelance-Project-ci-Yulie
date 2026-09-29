@@ -19,6 +19,7 @@
                 $order = $invoice->order;
                 $isImport = $invoice->order_type === 'import';
                 $notaNumber = $invoice->nota_number ?? '-';
+                $hasPendingDeleteRequest = $invoice->deleteRequest && $invoice->deleteRequest->status === 'pending';
             @endphp
 
             {{-- Header Actions --}}
@@ -28,7 +29,12 @@
                     <p class="text-gray-500 text-sm">Dibuat {{ $invoice->created_at->format('d M Y, H:i') }} oleh {{ $invoice->creator->name ?? '-' }}</p>
                     @if ($invoice->revision > 0)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 mt-1">
-                            Invoice Susulan ke-{{ $invoice->revision }}
+                            Invoice Susulan ({{ $invoice->revision }})
+                        </span>
+                    @endif
+                    @if ($hasPendingDeleteRequest)
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-1 ml-2">
+                            Menunggu Persetujuan Hapus
                         </span>
                     @endif
                 </div>
@@ -37,9 +43,9 @@
                         class="inline-flex items-center px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors shadow">
                         Edit Invoice
                     </a>
-                    <a href="{{ route('invoices.revision', $invoice) }}"
+                    <a href="{{ route('invoices.susulan', $invoice) }}"
                         class="inline-flex items-center px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-lg transition-colors shadow">
-                        Buat Invoice Susulan
+                        Invoice Susulan
                     </a>
                     <div class="relative">
                         <button @click="showPdfOptions = !showPdfOptions"
@@ -60,6 +66,25 @@
                             @endforeach
                         </div>
                     </div>
+                    @if(auth()->user()->hasRole('owner'))
+                        @if (!$hasPendingDeleteRequest)
+                            <form action="{{ route('invoices.request-delete', $invoice) }}" method="POST" onsubmit="return confirm('Yakin ingin mengajukan penghapusan invoice ini?')">
+                                @csrf
+                                <button type="submit"
+                                    class="inline-flex items-center px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-lg transition-colors shadow">
+                                    🗑️ Ajukan Hapus
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('invoices.cancel-delete', $invoice) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="inline-flex items-center px-4 py-2.5 bg-gray-500 hover:bg-gray-600 text-white text-sm font-semibold rounded-lg transition-colors shadow">
+                                    Batalkan Request Hapus
+                                </button>
+                            </form>
+                        @endif
+                    @endif
                     <a href="{{ route('invoices.index') }}"
                         class="inline-flex items-center px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold rounded-lg transition-colors">
                         ← Kembali
@@ -105,6 +130,14 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Notes Section --}}
+            @if (!empty(trim($order->issue ?? '')))
+                <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-6">
+                    <h3 class="text-sm font-bold text-yellow-600 uppercase tracking-wider mb-2">📝 Notes</h3>
+                    <p class="text-gray-800">{{ $order->issue }}</p>
+                </div>
+            @endif
 
             {{-- Sections --}}
             <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
@@ -167,7 +200,7 @@
                         </tr>
                     @endif
                 </table>
-                <p class="mt-3 text-sm italic text-gray-600">Terbilang: {{ $invoice->terbilang }}</p>
+                <p class="mt-3 text-sm italic text-gray-600">Terbesar: {{ $invoice->terbilang }}</p>
             </div>
         </div>
     </div>

@@ -1,8 +1,8 @@
-@php $isRevision = $isRevision ?? false; @endphp
+@php $isSusulan = $isSusulan ?? false; @endphp
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-            {{ $isRevision ? 'Buat Invoice Susulan — dari ' . $invoice->nota_number : 'Edit Invoice — ' . $invoice->nota_number }}
+            {{ $isSusulan ? 'Buat Invoice Susulan — dari ' . $invoice->nota_number : 'Edit Invoice — ' . $invoice->nota_number }}
         </h2>
     </x-slot>
 
@@ -20,24 +20,24 @@
             @endif
 
             {{-- Info banner --}}
-            @if ($isRevision)
+            @if ($isSusulan)
                 <div class="mb-6 bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-lg">
                     <p class="font-semibold">Mode Invoice Susulan</p>
-                    <p class="text-sm">Invoice baru akan dibuat dengan nomor yang mengikuti pola susulan. Anda bisa menambah, menghapus, atau mengubah section dan baris.</p>
+                    <p class="text-sm">Invoice baru akan dibuat dengan nomor susulan (A, B, C, dst). Anda bisa menambah item baru yang akan tercetak hanya untuk susulan ini saja.</p>
                 </div>
             @else
                 <div class="mb-6 bg-amber-50 border-l-4 border-amber-400 text-amber-800 p-4 rounded-lg">
                     <p class="font-semibold">Mode Edit</p>
-                    <p class="text-sm">Anda hanya bisa mengubah nilai baris yang sudah ada (label & amount). Untuk menambah atau menghapus baris, gunakan tombol <strong>"Buat Invoice Susulan"</strong> di halaman detail.</p>
+                    <p class="text-sm">Anda hanya bisa mengubah nilai baris yang sudah ada (label & amount). Untuk menambah item baru, gunakan tombol <strong>"Invoice Susulan"</strong> di halaman detail.</p>
                 </div>
             @endif
 
             <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-8"
                 x-data="invoiceEditForm()" x-cloak>
 
-                <form @submit.prevent="submitForm" method="POST" action="{{ $isRevision ? route('invoices.revision.store', $invoice) : route('invoices.update', $invoice) }}">
+                <form @submit.prevent="submitForm" method="POST" action="{{ $isSusulan ? route('invoices.susulan.store', $invoice) : route('invoices.update', $invoice) }}">
                     @csrf
-                    @if (!$isRevision) @method('PATCH') @endif
+                    @if (!$isSusulan) @method('PATCH') @endif
 
                     {{-- Order Info (read-only) --}}
                     <div class="mb-8 border-b pb-8">
@@ -61,11 +61,9 @@
                     {{-- Judul Invoice --}}
                     <div class="mb-8 border-b pb-8">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">📄 Judul Invoice</h3>
-                        <select name="invoice_title" x-model="invoiceTitle" required
-                            class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
-                            <option value="">-- Pilih Judul Invoice --</option>
-                            <option value="Invoice">Invoice</option>
-                        </select>
+                        <input type="text" name="invoice_title" value="Invoice" readonly
+                            class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold bg-gray-100 cursor-not-allowed">
+                        <p class="text-xs text-gray-400 mt-1">Invoice default (tidak bisa diubah)</p>
                         <input type="hidden" name="invoice_type" value="invoice">
                     </div>
 
@@ -122,8 +120,8 @@
                             <h3 class="text-lg font-bold text-gray-900">📝 Perincian / Sections (Fixed 3 Section)</h3>
                         </div>
                         <p class="text-sm text-gray-600 mb-4">
-                            <strong>Section 1:</strong> Reimbursement (tidak dihitung pajak) • 
-                            <strong>Section 2:</strong> Detail Invoice • 
+                            <strong>Section 1:</strong> Reimbursement (tidak dihitung pajak) •
+                            <strong>Section 2:</strong> Detail Invoice •
                             <strong>Section 3:</strong> Trucking
                         </p>
 
@@ -148,7 +146,7 @@
                                                     :name="'sections[' + sIdx + '][items][' + iIdx + '][amount]'"
                                                     class="flex-1 px-3 py-2 text-sm text-right focus:outline-none focus:ring-0 border-0">
                                             </div>
-                                            @if ($isRevision)
+                                            @if ($isSusulan)
                                                 <button type="button" @click="removeItem(sIdx, iIdx)" x-show="section.items.length > 1"
                                                     class="px-2 py-2 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg text-sm">
                                                     ✕
@@ -159,7 +157,7 @@
                                 </div>
 
                                 <div class="flex items-center justify-between mt-3">
-                                    @if ($isRevision)
+                                    @if ($isSusulan)
                                         <button type="button" @click="addItem(sIdx)"
                                             class="text-sm text-teal-600 hover:text-teal-800 font-semibold">
                                             + Tambah Baris
@@ -173,7 +171,7 @@
                                 </div>
                             </div>
                         </template>
-                        
+
                         <!-- Trucking Info -->
                         <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                             <h4 class="text-sm font-bold text-blue-900 mb-2">ℹ️ Info Trucking</h4>
@@ -197,7 +195,7 @@
                                     <p class="text-xs text-gray-500">PPN akan ditambahkan dari section yang dipilih</p>
                                 </div>
                             </label>
-                            
+
                             <!-- Taxable Sections Selection -->
                             <div x-show="includeTax" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
                                 <p class="text-sm font-bold text-amber-900 mb-3">Pilih Section yang Dikenakan Pajak:</p>
@@ -220,7 +218,7 @@
                                 </div>
                                 <p class="text-xs text-amber-700 mt-3">💡 Pilih satu atau kedua section untuk dihitung pajaknya</p>
                             </div>
-                            
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">% Pajak</label>
@@ -300,7 +298,7 @@
                         </a>
                         <button type="submit"
                             class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-slate-800 to-teal-700 hover:from-slate-900 hover:to-teal-800 text-white font-bold rounded-xl shadow-lg transition-all">
-                            {{ $isRevision ? 'Buat Invoice Revisi' : 'Update Invoice' }}
+                            {{ $isSusulan ? 'Buat Invoice Susulan' : 'Update Invoice' }}
                         </button>
                     </div>
                 </form>
@@ -312,7 +310,7 @@
         function invoiceEditForm() {
             let initialSections = @json($invoice->sections);
             const sectionNames = ['Reimbursement', 'Detail Invoice', 'Trucking'];
-            
+
             // If sections don't match fixed 3, normalize them
             if (initialSections.length !== 3) {
                 const tempSections = [];
@@ -330,7 +328,7 @@
                     items: section.items || [{ label: '', amount: 0 }]
                 }));
             }
-            
+
             return {
                 invoiceTitle: @js($invoice->invoice_title ?? ''),
                 headerFields: {
@@ -356,12 +354,12 @@
                 taxAmount() {
                     if (!this.includeTax) return 0;
                     if (!this.taxableSections || this.taxableSections.length === 0) return 0;
-                    
+
                     let taxableTotal = 0;
                     this.taxableSections.forEach(sectionIndex => {
                         taxableTotal += this.sectionTotal(sectionIndex);
                     });
-                    
+
                     return taxableTotal * (this.taxPercentage / 100);
                 },
                 totalBilling() { return this.grandTotal() + this.taxAmount(); },

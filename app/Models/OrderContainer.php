@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class OrderContainer extends Model
 {
@@ -20,6 +21,13 @@ class OrderContainer extends Model
         'combo_with',
         'combine_with',
         'combine_with_container_id',
+        'release_date',
+        'return_date',
+    ];
+
+    protected $casts = [
+        'release_date' => 'date',
+        'return_date' => 'date',
     ];
 
     public function order()
@@ -94,5 +102,53 @@ class OrderContainer extends Model
             ->whereNotNull('container_number')
             ->with('order')
             ->get();
+    }
+
+    /**
+     * Get detention deadline from parent order
+     */
+    public function getDetentionDeadlineAttribute()
+    {
+        $order = $this->order;
+        if (!$order) return null;
+
+        if ($this->order_type === 'import') {
+            $importOrder = ImportOrder::find($order->id);
+            return $importOrder ? $importOrder->detention_deadline : null;
+        } else {
+            $exportOrder = ExportOrder::find($order->id);
+            return $exportOrder ? $exportOrder->detention_deadline : null;
+        }
+    }
+
+    /**
+     * Calculate usage days (return_date - release_date)
+     */
+    public function getUsageDaysAttribute(): ?int
+    {
+        if (!$this->release_date || !$this->return_date) {
+            return null;
+        }
+        return $this->return_date->diffInDays($this->release_date);
+    }
+
+    /**
+     * Check if usage exceeds 7 days
+     */
+    public function getIsOverdueAttribute(): bool
+    {
+        if ($this->usage_days === null) return false;
+        return $this->usage_days > 7;
+    }
+
+    /**
+     * Check if past detention deadline
+     */
+    public function getIsPastDeadlineAttribute(): bool
+    {
+        if (!$this->detention_deadline || !$this->return_date) {
+            return false;
+        }
+        return $this->return_date->gt(Carbon::parse($this->detention_deadline));
     }
 }

@@ -21,6 +21,7 @@ class ExportOrder extends Model
         'vessel_name',
         'voy_number',
         'closing_date',
+        'detention_deadline',
         'peb_number',
         'depo',
         'pickup_date',
@@ -33,6 +34,7 @@ class ExportOrder extends Model
     protected $casts = [
         'order_date' => 'date',
         'closing_date' => 'date',
+        'detention_deadline' => 'date',
         'pickup_date' => 'date',
         'return_date' => 'date',
     ];

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-            {{ isset($parentInvoice) ? 'Buat Invoice Susulan' : 'Buat Invoice Baru' }}
+            Buat Invoice Baru
         </h2>
     </x-slot>
 
@@ -18,13 +18,6 @@
                 </div>
             @endif
 
-            @if (isset($parentInvoice))
-                <div class="mb-6 bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-lg">
-                    <p class="font-semibold">Invoice Susulan dari: {{ $parentInvoice->nota_number }}</p>
-                    <p class="text-sm">Nomor susulan akan dibuat otomatis untuk data baru yang dicetak sebagai revisi terbaru.</p>
-                </div>
-            @endif
-
             <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 p-8"
                 x-data="invoiceForm()" x-cloak>
 
@@ -38,21 +31,16 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Order</label>
                                 <select x-model="orderType" name="order_type"
-                                    {{ isset($parentInvoice) ? 'disabled' : '' }}
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 disabled:bg-gray-100">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                                     <option value="">-- Pilih Tipe --</option>
                                     <option value="import">Import</option>
                                     <option value="export">Export</option>
                                 </select>
-                                @if (isset($parentInvoice))
-                                    <input type="hidden" name="order_type" value="{{ $parentInvoice->order_type }}">
-                                @endif
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Order</label>
                                 <select x-model="orderId" name="order_id"
-                                    {{ isset($parentInvoice) ? 'disabled' : '' }}
-                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200 disabled:bg-gray-100">
+                                    class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
                                     <option value="">-- Pilih Order --</option>
                                     <template x-if="orderType === 'import'">
                                         <template x-for="order in importOrders" :key="order.id">
@@ -65,9 +53,6 @@
                                         </template>
                                     </template>
                                 </select>
-                                @if (isset($parentInvoice))
-                                    <input type="hidden" name="order_id" value="{{ $parentInvoice->order_id }}">
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -75,11 +60,9 @@
                     {{-- Judul Invoice --}}
                     <div class="mb-8 border-b pb-8">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">📄 Judul Invoice</h3>
-                        <select name="invoice_title" x-model="invoiceTitle" required
-                            class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
-                            <option value="">-- Pilih Judul Invoice --</option>
-                            <option value="Invoice">Invoice</option>
-                        </select>
+                        <input type="text" name="invoice_title" value="Invoice" readonly
+                            class="w-full border-2 border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold bg-gray-100 cursor-not-allowed">
+                        <p class="text-xs text-gray-400 mt-1">Invoice default (tidak bisa diubah)</p>
                         <input type="hidden" name="invoice_type" value="invoice">
                     </div>
 
@@ -144,8 +127,8 @@
                             <h3 class="text-lg font-bold text-gray-900">📝 Perincian / Sections (Fixed 3 Section)</h3>
                         </div>
                         <p class="text-sm text-gray-600 mb-4">
-                            <strong>Section 1:</strong> Reimbursement (tidak dihitung pajak) • 
-                            <strong>Section 2:</strong> Detail Invoice • 
+                            <strong>Section 1:</strong> Reimbursement (tidak dihitung pajak) •
+                            <strong>Section 2:</strong> Detail Invoice •
                             <strong>Section 3:</strong> Trucking
                         </p>
 
@@ -193,7 +176,7 @@
                                 </div>
                             </div>
                         </template>
-                        
+
                         <!-- Trucking Info -->
                         <div x-show="selectedOrder" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                             <h4 class="text-sm font-bold text-blue-900 mb-2">ℹ️ Info Trucking</h4>
@@ -217,7 +200,7 @@
                                     <p class="text-xs text-gray-500">PPN akan ditambahkan dari section yang dipilih</p>
                                 </div>
                             </label>
-                            
+
                             <!-- Taxable Sections Selection -->
                             <div x-show="includeTax" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
                                 <p class="text-sm font-bold text-amber-900 mb-3">Pilih Section yang Dikenakan Pajak:</p>
@@ -240,7 +223,7 @@
                                 </div>
                                 <p class="text-xs text-amber-700 mt-3">💡 Pilih satu atau kedua section untuk dihitung pajaknya</p>
                             </div>
-                            
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">% Pajak</label>
@@ -330,14 +313,11 @@
 
     <script>
         function invoiceForm() {
-            const parentInvoice = @json($parentInvoice ?? null);
-
             return {
                 orderType: '{{ $selectedOrderType ?? '' }}',
                 orderId: '{{ $selectedOrderId ?? '' }}',
                 importOrders: @json($importOrders),
                 exportOrders: @json($exportOrders),
-                invoiceTitle: parentInvoice ? parentInvoice.invoice_title || '' : '',
                 headerFields: {
                     vessel_name: '',
                     vessel_date: '',
@@ -353,27 +333,12 @@
                     { name: 'Detail Invoice', items: [{ label: '', amount: 0 }] },
                     { name: 'Trucking', items: [{ label: '', amount: 0 }] }
                 ],
-                includeTax: parentInvoice ? !!parentInvoice.include_tax : false,
-                taxPercentage: parentInvoice ? parseFloat(parentInvoice.tax_percentage) || 1.1 : 1.1,
-                taxableSections: parentInvoice ? (parentInvoice.taxable_sections || []) : [],
-                panjar: parentInvoice ? parseFloat(parentInvoice.panjar) || 0 : 0,
+                includeTax: false,
+                taxPercentage: 1.1,
+                taxableSections: [],
+                panjar: 0,
 
                 init() {
-                    // If parent (revision), pre-fill header from parent invoice
-                    if (parentInvoice) {
-                        this.headerFields = {
-                            vessel_name: parentInvoice.vessel_name || '',
-                            vessel_date: parentInvoice.vessel_date || '',
-                            destination: parentInvoice.destination || '',
-                            party_display: parentInvoice.party_display || '',
-                            product_name: parentInvoice.product_name || '',
-                            tonage: parentInvoice.tonage || '',
-                            merk: parentInvoice.merk || '',
-                            container_display: parentInvoice.container_display || '',
-                        };
-                        return;
-                    }
-
                     // Watch for order selection to auto-fill header
                     this.$watch('orderId', (val) => {
                         if (!val) return;
@@ -414,12 +379,12 @@
                 taxAmount() {
                     if (!this.includeTax) return 0;
                     if (!this.taxableSections || this.taxableSections.length === 0) return 0;
-                    
+
                     let taxableTotal = 0;
                     this.taxableSections.forEach(sectionIndex => {
                         taxableTotal += this.sectionTotal(sectionIndex);
                     });
-                    
+
                     return taxableTotal * (this.taxPercentage / 100);
                 },
                 totalBilling() {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ExportOrder;
 use App\Models\ImportOrder;
 use App\Models\Invoice;
+use App\Models\InvoiceDeleteRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -25,8 +26,8 @@ class InvoiceController extends Controller
 
     public function create(Request $request)
     {
-        $usedImportIds = Invoice::where('order_type', 'import')->pluck('order_id')->toArray();
-        $usedExportIds = Invoice::where('order_type', 'export')->pluck('order_id')->toArray();
+        $usedImportIds = Invoice::pluck('order_id')->where('order_type', 'import')->toArray();
+        $usedExportIds = Invoice::pluck('order_id')->where('order_type', 'export')->toArray();
 
         $importOrders = ImportOrder::with('customer')
             ->whereNotIn('id', $usedImportIds)
@@ -47,7 +48,6 @@ class InvoiceController extends Controller
             'order_type'              => 'required|in:import,export',
             'order_id'                => 'required|integer',
             'invoice_title'           => 'required|string|max:255',
-            'invoice_type'            => 'required|in:reimbursement,invoice',
             'vessel_name'             => 'nullable|string|max:255',
             'vessel_date'             => 'nullable|string|max:255',
             'destination'             => 'nullable|string|max:255',
@@ -59,7 +59,7 @@ class InvoiceController extends Controller
             'sections'                => 'required|array|min:3|max:3',
             'sections.*.name'         => 'required|string|max:255',
             'sections.*.items'        => 'required|array|min:1',
-            'sections.*.items.*.label'  => 'required|string|max:255',
+            'sections.*.items.*.label' => 'required|string|max:255',
             'sections.*.items.*.amount' => 'required|numeric|min:0',
             'panjar'                  => 'nullable|numeric|min:0',
             'include_tax'             => 'nullable|boolean',
@@ -85,7 +85,7 @@ class InvoiceController extends Controller
             'order_id'          => $request->order_id,
             'nota_number'       => $nota['nota'],
             'invoice_title'     => $request->invoice_title,
-            'invoice_type'      => $request->invoice_type,
+            'invoice_type'      => 'invoice',
             'vessel_name'       => $request->vessel_name,
             'vessel_date'       => $request->vessel_date,
             'destination'       => $request->destination,
@@ -123,7 +123,6 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'invoice_title'           => 'required|string|max:255',
-            'invoice_type'            => 'required|in:reimbursement,invoice',
             'vessel_name'             => 'nullable|string|max:255',
             'vessel_date'             => 'nullable|string|max:255',
             'destination'             => 'nullable|string|max:255',
@@ -135,7 +134,7 @@ class InvoiceController extends Controller
             'sections'                => 'required|array|min:3|max:3',
             'sections.*.name'         => 'required|string|max:255',
             'sections.*.items'        => 'required|array|min:1',
-            'sections.*.items.*.label'  => 'required|string|max:255',
+            'sections.*.items.*.label' => 'required|string|max:255',
             'sections.*.items.*.amount' => 'required|numeric|min:0',
             'panjar'                  => 'nullable|numeric|min:0',
             'include_tax'             => 'nullable|boolean',
@@ -146,7 +145,6 @@ class InvoiceController extends Controller
 
         $invoice->update([
             'invoice_title'     => $request->invoice_title,
-            'invoice_type'      => $request->invoice_type,
             'vessel_name'       => $request->vessel_name,
             'vessel_date'       => $request->vessel_date,
             'destination'       => $request->destination,
@@ -166,21 +164,26 @@ class InvoiceController extends Controller
             ->with('success', 'Invoice berhasil diupdate!');
     }
 
-    public function createRevision(Invoice $invoice)
+    /**
+     * Show form to create susulan invoice
+     */
+    public function createSusulan(Invoice $invoice)
     {
         $invoice->order;
 
         return view('invoices.edit', [
             'invoice'    => $invoice,
-            'isRevision' => true,
+            'isSusulan' => true,
         ]);
     }
 
-    public function storeRevision(Request $request, Invoice $invoice)
+    /**
+     * Store susulan invoice
+     */
+    public function storeSusulan(Request $request, Invoice $invoice)
     {
         $request->validate([
             'invoice_title'           => 'required|string|max:255',
-            'invoice_type'            => 'required|in:reimbursement,invoice',
             'vessel_name'             => 'nullable|string|max:255',
             'vessel_date'             => 'nullable|string|max:255',
             'destination'             => 'nullable|string|max:255',
@@ -192,7 +195,7 @@ class InvoiceController extends Controller
             'sections'                => 'required|array|min:3|max:3',
             'sections.*.name'         => 'required|string|max:255',
             'sections.*.items'        => 'required|array|min:1',
-            'sections.*.items.*.label'  => 'required|string|max:255',
+            'sections.*.items.*.label' => 'required|string|max:255',
             'sections.*.items.*.amount' => 'required|numeric|min:0',
             'panjar'                  => 'nullable|numeric|min:0',
             'include_tax'             => 'nullable|boolean',
@@ -208,7 +211,7 @@ class InvoiceController extends Controller
             'order_id'          => $invoice->order_id,
             'nota_number'       => $nota['nota'],
             'invoice_title'     => $request->invoice_title,
-            'invoice_type'      => $request->invoice_type,
+            'invoice_type'      => 'invoice',
             'vessel_name'       => $request->vessel_name,
             'vessel_date'       => $request->vessel_date,
             'destination'       => $request->destination,
@@ -227,7 +230,56 @@ class InvoiceController extends Controller
         ]);
 
         return redirect()->route('invoices.show', $newInvoice)
-            ->with('success', 'Invoice revisi (susulan) berhasil dibuat! Nota: ' . $nota['nota']);
+            ->with('success', 'Invoice Susulan berhasil dibuat! Nota: ' . $nota['nota']);
+    }
+
+    /**
+     * Request to delete an invoice (requires owner approval)
+     */
+    public function requestDelete(Request $request, Invoice $invoice)
+    {
+        $request->validate([
+            'reason' => 'nullable|string|max:1000',
+        ]);
+
+        // Check if there's already a pending request
+        $existingRequest = InvoiceDeleteRequest::where('invoice_id', $invoice->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existingRequest) {
+            return back()->withErrors(['error' => 'Request hapus sudah ada dan sedang menunggu persetujuan.']);
+        }
+
+        InvoiceDeleteRequest::create([
+            'invoice_id'    => $invoice->id,
+            'requested_by'  => auth()->id(),
+            'status'        => 'pending',
+            'review_notes'  => $request->reason,
+        ]);
+
+        return redirect()->route('invoices.show', $invoice)
+            ->with('success', 'Request hapus invoice telah dikirim ke Owner untuk persetujuan.');
+    }
+
+    /**
+     * Cancel delete request
+     */
+    public function cancelDeleteRequest(Invoice $invoice)
+    {
+        $deleteRequest = InvoiceDeleteRequest::where('invoice_id', $invoice->id)
+            ->where('requested_by', auth()->id())
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$deleteRequest) {
+            return back()->withErrors(['error' => 'Request hapus tidak ditemukan.']);
+        }
+
+        $deleteRequest->update(['status' => 'cancelled']);
+
+        return redirect()->route('invoices.show', $invoice)
+            ->with('success', 'Request hapus invoice berhasil dibatalkan.');
     }
 
     public function destroy(Invoice $invoice)
@@ -256,5 +308,65 @@ class InvoiceController extends Controller
         $safeFilename = str_replace(['/', '\\'], '-', $invoice->nota_number ?? 'invoice');
 
         return $pdf->stream("Invoice-{$safeFilename}.pdf");
+    }
+
+    // ============================================================
+    // OWNER APPROVAL METHODS
+    // ============================================================
+
+    /**
+     * List all pending delete requests (Owner only)
+     */
+    public function deleteRequests()
+    {
+        $requests = InvoiceDeleteRequest::with(['invoice', 'requester'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('invoices.delete-requests', compact('requests'));
+    }
+
+    /**
+     * Approve delete request (Owner only)
+     */
+    public function approveDelete(Request $request, InvoiceDeleteRequest $deleteRequest)
+    {
+        $request->validate([
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $invoice = $deleteRequest->invoice;
+
+        $deleteRequest->update([
+            'status'       => 'approved',
+            'reviewed_by'  => auth()->id(),
+            'review_notes' => $request->notes,
+        ]);
+
+        // Delete the invoice
+        $invoice->delete();
+
+        return redirect()->route('invoices.delete-requests')
+            ->with('success', 'Invoice berhasil dihapus setelah persetujuan Owner.');
+    }
+
+    /**
+     * Reject delete request (Owner only)
+     */
+    public function rejectDelete(Request $request, InvoiceDeleteRequest $deleteRequest)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $deleteRequest->update([
+            'status'           => 'cancelled',
+            'reviewed_by'      => auth()->id(),
+            'rejection_reason' => $request->reason,
+        ]);
+
+        return redirect()->route('invoices.delete-requests')
+            ->with('success', 'Request hapus invoice ditolak.');
     }
 }
