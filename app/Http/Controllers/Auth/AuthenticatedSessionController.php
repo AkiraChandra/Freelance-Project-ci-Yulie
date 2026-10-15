@@ -23,11 +23,18 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => redirect()->intended(RouteServiceProvider::HOME)->getTargetUrl(),
+            ]);
+        }
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }

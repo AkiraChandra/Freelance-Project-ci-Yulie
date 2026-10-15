@@ -73,7 +73,7 @@ Route::middleware(['auth', 'role:owner', 'check.user.status'])->group(function (
 });
 
 // Company Management Routes - For Staff roles
-Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.status'])->group(function () {
+Route::middleware(['auth', 'role:staff-accounting|staff', 'check.user.status'])->group(function () {
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
     Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
     Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
@@ -83,7 +83,7 @@ Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.st
 });
 
 // Customer Management Routes - For Staff roles
-Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.status'])->group(function () {
+Route::middleware(['auth', 'role:staff-accounting|staff', 'check.user.status'])->group(function () {
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('/customers/create', [CustomerController::class, 'create'])->name('customers.create');
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
@@ -93,12 +93,12 @@ Route::middleware(['auth', 'role:staff-accounting|staff|manager', 'check.user.st
 });
 
 // Order Routes - View only (owner, accounting, staff, manager)
-Route::middleware(['auth', 'role:owner|staff-accounting|staff|manager', 'check.user.status'])->group(function () {
+Route::middleware(['auth', 'role:owner|staff-accounting|staff', 'check.user.status'])->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 });
 
 // Order Routes - Create/Edit/Delete (staff and manager only, NOT accounting)
-Route::middleware(['auth', 'role:staff|manager', 'check.user.status'])->group(function () {
+Route::middleware(['auth', 'role:staff', 'check.user.status'])->group(function () {
     Route::get('/orders/create', [OrderController::class, 'selectType'])->name('orders.select-type');
 
     // Import

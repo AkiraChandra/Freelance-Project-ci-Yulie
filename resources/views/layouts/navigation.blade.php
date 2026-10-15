@@ -40,7 +40,7 @@
                         </a>
                     @endrole
 
-                    @hasanyrole('staff-accounting|staff|manager')
+                    @hasanyrole('staff-accounting|staff')
                         <a href="{{ route('customers.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('customers.*') ? 'text-teal-700 bg-teal-50 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
                             Customer
                         </a>
@@ -131,7 +131,7 @@
                     {{ __('Order') }}
                 </x-responsive-nav-link>
             @endrole
-            @hasanyrole('staff-accounting|staff|manager')
+            @hasanyrole('staff-accounting|staff')
                 <x-responsive-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
                     {{ __('Customer') }}
                 </x-responsive-nav-link>

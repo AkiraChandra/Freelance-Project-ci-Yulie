@@ -22,7 +22,7 @@
                         <h1 class="text-2xl font-bold text-white">Order</h1>
                         <p class="text-slate-300 text-sm mt-1">Kelola semua order impor dan ekspor</p>
                     </div>
-                    @hasanyrole('staff|manager')
+                    @hasanyrole('staff')
                     <a href="{{ route('orders.select-type') }}"
                         class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-colors">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,7 +97,7 @@
                                         <th class="px-4 py-3 font-semibold text-gray-600">Nama Barang</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Party</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
-                                        @hasanyrole('staff|manager')
+                                        @hasanyrole('staff')
                                         <th class="px-4 py-3 font-semibold text-gray-600 text-center">Aksi</th>
                                         @endhasanyrole
                                     </tr>
@@ -126,7 +126,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-4 py-3 text-center">
-                                                @hasanyrole('staff|manager')
+                                                @hasanyrole('staff')
                                                 <div class="flex items-center justify-center gap-2">
                                                     <a href="{{ route('import-orders.edit', $order) }}"
                                                         class="inline-flex items-center px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium rounded-lg text-xs transition-colors">
@@ -169,7 +169,7 @@
                                         <th class="px-4 py-3 font-semibold text-gray-600">Nama Barang</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Party</th>
                                         <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
-                                        @hasanyrole('staff|manager')
+                                        @hasanyrole('staff')
                                         <th class="px-4 py-3 font-semibold text-gray-600 text-center">Aksi</th>
                                         @endhasanyrole
                                     </tr>
@@ -198,7 +198,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-4 py-3 text-center">
-                                                @hasanyrole('staff|manager')
+                                                @hasanyrole('staff')
                                                 <div class="flex items-center justify-center gap-2">
                                                     <a href="{{ route('export-orders.edit', $order) }}"
                                                         class="inline-flex items-center px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium rounded-lg text-xs transition-colors">
