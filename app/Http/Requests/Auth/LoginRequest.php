@@ -29,6 +29,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'role' => ['required', 'string', 'in:owner,staff-accounting,staff'],
         ];
     }
 
@@ -41,11 +42,17 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $selectedRole = $this->string('role')->toString();
+
+        if (! Auth::attemptWhen(
+            $this->only('email', 'password'),
+            fn ($user) => $user->roleModel?->name === $selectedRole && $user->hasRole($selectedRole),
+            $this->boolean('remember'),
+        )) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Email, kata sandi, atau peran tidak sesuai.',
             ]);
         }
 

@@ -408,7 +408,7 @@
             </div>
         @endrole
 
-        @hasanyrole('staff|manager')
+        @hasanyrole('staff')
             {{-- ===== STAFF / MANAGER DASHBOARD ===== --}}
 
             <!-- Stats Row -->
