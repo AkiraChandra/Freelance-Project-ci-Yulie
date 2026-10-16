@@ -353,66 +353,128 @@ class OrderController extends Controller
 
     protected function saveContainers($orderId, $orderType, Request $request)
     {
+        // Delete existing containers for this order
         OrderContainer::where('order_id', $orderId)->where('order_type', $orderType)->delete();
 
-        $containerSize = $request->input('container_size');
+        $groups = $request->input('groups', []);
 
-        if ($containerSize === 'LCL') {
-            $quantity = $request->input('container_quantity', 1);
-            for ($i = 0; $i < $quantity; $i++) {
-                OrderContainer::create([
+        if (empty($groups)) {
+            return;
+        }
+
+        $containerMap = []; // Maps container_number => container_id for current order
+        $containerObjects = []; // Store container objects for bidirectional relationship
+        $globalIndex = 1;
+
+        // First pass: Create all containers
+        foreach ($groups as $group) {
+            $size = $group['size'] ?? null;
+
+            if ($size === 'LCL') {
+                $quantity = max(1, (int) ($group['quantity'] ?? 1));
+                $lclVendor = $group['lcl_vendor'] ?? null;
+                for ($i = 0; $i < $quantity; $i++) {
+                    OrderContainer::create([
+                        'order_id' => $orderId,
+                        'order_type' => $orderType,
+                        'container_group' => $globalIndex,
+                        'container_size' => 'LCL',
+                        'container_number' => null,
+                        'container_type' => null,
+                        'vendor' => $lclVendor,
+                        'combo_with' => null,
+                        'combine_with_container_id' => null,
+                    ]);
+                }
+                $globalIndex++;
+                continue;
+            }
+
+            $containers = $group['containers'] ?? [];
+            foreach ($containers as $containerData) {
+                $containerNumber = trim((string) ($containerData['number'] ?? ''));
+                $container = OrderContainer::create([
                     'order_id' => $orderId,
                     'order_type' => $orderType,
-                    'container_group' => 1,
-                    'container_size' => 'LCL',
-                    'container_number' => null,
-                    'container_type' => null,
-                    'vendor' => $request->input('lcl_vendor'),
+                    'container_group' => $globalIndex,
+                    'container_size' => $size,
+                    'container_number' => $containerNumber !== '' ? $containerNumber : null,
+                    'container_type' => $containerData['type'] ?? null,
+                    'vendor' => $containerData['vendor'] ?? null,
                     'combo_with' => null,
                     'combine_with_container_id' => null,
                 ]);
+
+                if ($containerNumber !== '') {
+                    $containerMap[$containerNumber] = $container->id;
+                    $containerObjects[$container->id] = $container;
+                }
             }
-            return;
+            $globalIndex++;
         }
 
-        $containers = $request->input('containers', []);
-        if (empty($containers)) {
-            return;
-        }
+        // Second pass: Resolve COMBO references (same order, bidirectional)
+        foreach ($groups as $group) {
+            if (($group['size'] ?? '') === 'LCL') {
+                continue;
+            }
+            $containers = $group['containers'] ?? [];
+            foreach ($containers as $containerData) {
+                $containerNumber = trim((string) ($containerData['number'] ?? ''));
+                $comboContainerNumber = trim((string) ($containerData['combo'] ?? ''));
 
-        $containerMap = [];
-        foreach ($containers as $index => $containerData) {
-            $containerNumber = trim((string) ($containerData['number'] ?? ''));
-            $container = OrderContainer::create([
-                'order_id' => $orderId,
-                'order_type' => $orderType,
-                'container_group' => $index + 1,
-                'container_size' => $containerSize,
-                'container_number' => $containerNumber !== '' ? $containerNumber : null,
-                'container_type' => $containerData['type'] ?? null,
-                'vendor' => $containerData['vendor'] ?? null,
-                'combo_with' => null,
-                'combine_with_container_id' => null,
-            ]);
+                // COMBO: Must be in same order, same size, same type, same vendor, different number
+                if ($containerNumber !== '' && $comboContainerNumber !== '' && isset($containerMap[$comboContainerNumber])) {
+                    $sourceId = $containerMap[$containerNumber];
+                    $targetId = $containerMap[$comboContainerNumber];
 
-            if ($containerNumber !== '') {
-                $containerMap[$containerNumber] = $container->id;
+                    // Update bidirectional relationship
+                    OrderContainer::where('id', $sourceId)->update(['combo_with' => $targetId]);
+                    OrderContainer::where('id', $targetId)->update(['combo_with' => $sourceId]);
+                }
             }
         }
 
-        foreach ($containers as $containerData) {
-            $containerNumber = trim((string) ($containerData['number'] ?? ''));
-            $comboContainerNumber = trim((string) ($containerData['combo'] ?? ''));
-            $combineContainerNumber = trim((string) ($containerData['combine'] ?? ''));
-
-            if ($containerNumber !== '' && $comboContainerNumber !== '' && isset($containerMap[$comboContainerNumber])) {
-                OrderContainer::where('id', $containerMap[$containerNumber])
-                    ->update(['combo_with' => $containerMap[$comboContainerNumber]]);
+        // Third pass: Resolve COMBINE references (different order, bidirectional)
+        foreach ($groups as $group) {
+            if (($group['size'] ?? '') === 'LCL') {
+                continue;
             }
+            $containers = $group['containers'] ?? [];
+            foreach ($containers as $containerData) {
+                $containerNumber = trim((string) ($containerData['number'] ?? ''));
+                $combineValue = trim((string) ($containerData['combine'] ?? ''));
 
-            if ($containerNumber !== '' && $combineContainerNumber !== '' && isset($containerMap[$combineContainerNumber])) {
-                OrderContainer::where('id', $containerMap[$containerNumber])
-                    ->update(['combine_with_container_id' => $containerMap[$combineContainerNumber]]);
+                // COMBINE: Format is "order_code/container_number"
+                if ($containerNumber !== '' && $combineValue !== '') {
+                    $parts = explode('/', $combineValue, 2);
+                    if (count($parts) === 2) {
+                        $targetOrderCode = $parts[0];
+                        $targetContainerNumber = $parts[1];
+
+                        // Find the target order
+                        $targetOrder = Order::where('order_code', $targetOrderCode)
+                            ->where('type', $orderType)
+                            ->first();
+
+                        if ($targetOrder) {
+                            // Find the target container
+                            $targetContainer = OrderContainer::where('order_id', $targetOrder->id)
+                                ->where('order_type', $orderType)
+                                ->where('container_number', $targetContainerNumber)
+                                ->first();
+
+                            if ($targetContainer) {
+                                $sourceId = $containerMap[$containerNumber];
+                                $targetId = $targetContainer->id;
+
+                                // Update bidirectional relationship
+                                OrderContainer::where('id', $sourceId)->update(['combine_with_container_id' => $targetId]);
+                                OrderContainer::where('id', $targetId)->update(['combine_with_container_id' => $sourceId]);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

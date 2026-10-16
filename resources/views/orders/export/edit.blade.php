@@ -8,6 +8,52 @@
             $tv_parts = array_map('trim', explode(',', $exportOrder->trucking_vendor ?? ''));
             $tv1_saved = old('trucking_vendor_1', $tv_parts[0] ?? '');
             $tv2_saved = old('trucking_vendor_2', $tv_parts[1] ?? '');
+
+            // Prepare existing container groups for the form
+            $existingGroups = [];
+            if ($exportOrder->order) {
+                $containers = $exportOrder->order->containers()->orderBy('container_group')->get();
+                $groupedContainers = $containers->groupBy('container_group');
+
+                foreach ($groupedContainers as $groupId => $groupContainers) {
+                    $firstContainer = $groupContainers->first();
+                    $groupData = [
+                        'size' => $firstContainer->container_size,
+                        'quantity' => $groupContainers->count(),
+                        'lclVendor' => $firstContainer->vendor ?? '',
+                        'containers' => []
+                    ];
+
+                    if ($firstContainer->container_size !== 'LCL') {
+                        foreach ($groupContainers as $container) {
+                            $comboValue = '';
+                            if ($container->comboContainer) {
+                                $comboValue = $container->comboContainer->container_number ?? '';
+                            }
+
+                            $combineValue = '';
+                            $combineSource = '';
+                            if ($container->combineWithContainer) {
+                                $targetOrder = $container->combineWithContainer->order;
+                                if ($targetOrder) {
+                                    $combineValue = $targetOrder->order_code . '/' . $container->combineWithContainer->container_number;
+                                }
+                            }
+
+                            $groupData['containers'][] = [
+                                'number' => $container->container_number ?? '',
+                                'type' => $container->container_type ?? '',
+                                'vendor' => $container->vendor ?? '',
+                                'combo' => $comboValue,
+                                'combine' => $combineValue,
+                                'combineSource' => $combineSource,
+                            ];
+                        }
+                    }
+
+                    $existingGroups[] = $groupData;
+                }
+            }
         @endphp
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8" x-data="{ party: '{{ old('party', $exportOrder->party) }}' }">
 
@@ -151,19 +197,21 @@
                     </div>
                 </div>
 
-                {{-- CONTAINER --}}
-                <div x-show="party !== 'LCL'" class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                {{-- CONTAINER DETAILS --}}
+                <x-container-input
+                    :order="$exportOrder->order"
+                    :existingGroups="$existingGroups"
+                    :vendors="$vendors"
+                    :orderId="$exportOrder->order_id"
+                    orderType="export"
+                />
+
+                {{-- TANGGAL PENTING --}}
+                <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                        <h3 class="font-bold text-gray-900">Data Container & Tanggal</h3>
+                        <h3 class="font-bold text-gray-900">Tanggal Penting</h3>
                     </div>
                     <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-                        <div class="sm:col-span-2">
-                            <label for="container_number" class="block text-sm font-bold text-gray-700 mb-1">No Container</label>
-                            <input type="text" name="container_number" id="container_number" value="{{ old('container_number', $exportOrder->container_number) }}"
-                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all text-sm">
-                        </div>
-
                         <div>
                             <label for="pickup_date" class="block text-sm font-bold text-gray-700 mb-1">Tgl Pengantaran</label>
                             <input type="date" name="pickup_date" id="pickup_date" value="{{ old('pickup_date', $exportOrder->pickup_date?->format('Y-m-d')) }}"

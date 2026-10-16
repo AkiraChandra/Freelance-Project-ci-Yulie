@@ -10,6 +10,7 @@ use App\Http\Controllers\OperationalStaffController;
 use App\Http\Controllers\OperationalStaffAssignmentController;
 use App\Http\Controllers\OwnerAssignmentController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ContainerApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -117,6 +118,11 @@ Route::middleware(['auth', 'role:staff|manager', 'check.user.status'])->group(fu
 
     // Container dates update
     Route::patch('/containers/{container}/dates', [OrderController::class, 'updateContainerDates'])->name('containers.update-dates');
+
+    // Container API Routes (for Combo/Combine)
+    Route::get('/api/containers/available-for-combine', [ContainerApiController::class, 'availableForCombine'])->name('api.containers.available-for-combine');
+    Route::post('/api/containers/check-combo', [ContainerApiController::class, 'checkCombo'])->name('api.containers.check-combo');
+    Route::post('/api/containers/check-combine', [ContainerApiController::class, 'checkCombine'])->name('api.containers.check-combine');
 });
 
 // Staff Assignment Routes - Accounting only
