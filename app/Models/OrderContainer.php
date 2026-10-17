@@ -35,44 +35,132 @@ class OrderContainer extends Model
         return $this->belongsTo(Order::class);
     }
 
+    /**
+     * Get the container this container is combo'd with
+     */
     public function comboContainer()
     {
         return $this->belongsTo(OrderContainer::class, 'combo_with');
     }
 
+    /**
+     * Get all containers that are combo'd with this container
+     */
     public function comboCombinations()
     {
         return $this->hasMany(OrderContainer::class, 'combo_with');
     }
 
+    /**
+     * Get the container this container is combined with
+     */
     public function combineWithContainer()
     {
         return $this->belongsTo(OrderContainer::class, 'combine_with_container_id');
     }
 
-    public function canCombineWith(self $otherContainer): bool
-    {
-        if ($this->order_id === $otherContainer->order_id && $this->order_type === $otherContainer->order_type) {
-            return false;
-        }
-
-        return $this->container_size === $otherContainer->container_size
-            && $this->vendor === $otherContainer->vendor
-            && $this->container_type === $otherContainer->container_type
-            && ($this->order->customer_id ?? null) === ($otherContainer->order->customer_id ?? null)
-            && trim((string) $this->container_number) !== ''
-            && trim((string) $otherContainer->container_number) !== ''
-            && trim((string) $this->container_number) === trim((string) $otherContainer->container_number);
-    }
-
+    /**
+     * Get all containers that are combined with this container
+     */
     public function combineCombinations()
     {
         return $this->hasMany(OrderContainer::class, 'combine_with_container_id');
     }
 
+    /**
+     * Check if this container can be combined with another container from different order
+     * Rules:
+     * - Different order
+     * - Same customer
+     * - Same order type
+     * - Order status is "on going"
+     * - Same size, type, vendor, AND container number
+     */
+    public function canCombineWith(self $otherContainer): bool
+    {
+        // Must be different order
+        if ($this->order_id === $otherContainer->order_id) {
+            return false;
+        }
+
+        // Must be same type
+        if ($this->order_type !== $otherContainer->order_type) {
+            return false;
+        }
+
+        // Must be same customer
+        $thisOrder = $this->order;
+        $otherOrder = $otherContainer->order;
+        if (!$thisOrder || !$otherOrder || $thisOrder->customer_id !== $otherOrder->customer_id) {
+            return false;
+        }
+
+        // Must be on going orders
+        if ($thisOrder->status !== 'on going' || $otherOrder->status !== 'on going') {
+            return false;
+        }
+
+        // Must be same size, type, vendor, AND container number
+        return $this->container_size === $otherContainer->container_size
+            && $this->vendor === $otherContainer->vendor
+            && $this->container_type === $otherContainer->container_type
+            && $this->container_number === $otherContainer->container_number
+            && !empty(trim((string) $this->container_number))
+            && !empty(trim((string) $otherContainer->container_number));
+    }
+
+    /**
+     * Check if this container can be combo'd with another container from the same order
+     */
+    public function canComboWith(self $otherContainer): bool
+    {
+        // Must be same order
+        if ($this->order_id !== $otherContainer->order_id) {
+            return false;
+        }
+
+        // Must be different container
+        if ($this->id === $otherContainer->id) {
+            return false;
+        }
+
+        // Must be same type
+        if ($this->order_type !== $otherContainer->order_type) {
+            return false;
+        }
+
+        // Must be same size, type, vendor, AND different container number
+        return $this->container_size === $otherContainer->container_size
+            && $this->vendor === $otherContainer->vendor
+            && $this->container_type === $otherContainer->container_type
+            && $this->container_number !== $otherContainer->container_number
+            && !empty(trim((string) $this->container_number))
+            && !empty(trim((string) $otherContainer->container_number));
+    }
+
+    /**
+     * Get the combo container number
+     */
     public function getComboContainerNumberAttribute()
     {
         return $this->comboContainer ? $this->comboContainer->container_number : null;
+    }
+
+    /**
+     * Get the combine order code and container number
+     */
+    public function getCombineDisplayAttribute()
+    {
+        if (!$this->combineWithContainer) {
+            return null;
+        }
+
+        $targetOrder = $this->combineWithContainer->order;
+        if (!$targetOrder) {
+            return null;
+        }
+
+        return $targetOrder->order_code . '/' . $this->combineWithContainer->container_number;
     }
 
     public function scopeImport($query)
@@ -90,7 +178,10 @@ class OrderContainer extends Model
         return $query->where('container_group', $group);
     }
 
-    public static function getAvailableForCombine($currentOrderId, $containerSize, $vendor, $containerType)
+    /**
+     * Get available containers for Combine from other orders
+     */
+    public static function getAvailableForCombine($currentOrderId, $containerSize, $vendor, $containerType, $containerNumber)
     {
         return self::whereHas('order', function ($query) use ($currentOrderId) {
                 $query->where('status', 'on going')
@@ -99,8 +190,25 @@ class OrderContainer extends Model
             ->where('container_size', $containerSize)
             ->where('vendor', $vendor)
             ->where('container_type', $containerType)
+            ->where('container_number', $containerNumber)
             ->whereNotNull('container_number')
+            ->where('container_number', '!=', '')
             ->with('order')
+            ->get();
+    }
+
+    /**
+     * Get available containers for Combo from the same order
+     */
+    public static function getAvailableForCombo($currentOrderId, $containerSize, $vendor, $containerType)
+    {
+        return self::where('order_id', $currentOrderId)
+            ->where('container_size', $containerSize)
+            ->where('vendor', $vendor)
+            ->where('container_type', $containerType)
+            ->whereNotNull('container_number')
+            ->where('container_number', '!=', '')
+            ->whereNull('combo_with') // Only containers not already combo'd
             ->get();
     }
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\CompanyController;
@@ -11,6 +10,7 @@ use App\Http\Controllers\OperationalStaffController;
 use App\Http\Controllers\OperationalStaffAssignmentController;
 use App\Http\Controllers\OwnerAssignmentController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ContainerApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,9 +28,9 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/dashboard', DashboardController::class)
-    ->middleware(['auth', 'verified', 'check.user.status'])
-    ->name('dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified', 'check.user.status'])->name('dashboard');
 
 Route::middleware(['auth', 'check.user.status'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -118,6 +118,11 @@ Route::middleware(['auth', 'role:staff', 'check.user.status'])->group(function (
 
     // Container dates update
     Route::patch('/containers/{container}/dates', [OrderController::class, 'updateContainerDates'])->name('containers.update-dates');
+
+    // Container API Routes (for Combo/Combine)
+    Route::get('/api/containers/available-for-combine', [ContainerApiController::class, 'availableForCombine'])->name('api.containers.available-for-combine');
+    Route::post('/api/containers/check-combo', [ContainerApiController::class, 'checkCombo'])->name('api.containers.check-combo');
+    Route::post('/api/containers/check-combine', [ContainerApiController::class, 'checkCombine'])->name('api.containers.check-combine');
 });
 
 // Staff Assignment Routes - Accounting only
