@@ -32,6 +32,14 @@
             this.value = opt.value;
             this.open = false;
             this.search = '';
+        },
+        init() {
+            const draftName = {{ Js::from($name) }};
+            window.addEventListener('order-form-draft-restore', (event) => {
+                if (event.detail && event.detail.name === draftName) {
+                    this.value = event.detail.value;
+                }
+            });
         }
     }"
     @click.outside="open = false"

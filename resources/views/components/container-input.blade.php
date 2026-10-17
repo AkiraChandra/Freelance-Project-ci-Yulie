@@ -1,228 +1,216 @@
 @props(['order' => null, 'existingGroups' => [], 'vendors' => [], 'orderId' => null, 'orderType' => 'import', 'availableCombineContainers' => []])
 
-<div x-data="containerGroupsManager()">
-    <div class="bg-white rounded-2xl shadow-2xl border-2 border-gray-300 overflow-hidden">
-        <div class="px-6 py-5 bg-white border-b-2 border-gray-200 flex justify-between items-center">
-            <div>
-                <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                    </svg>
-                    Container Details
-                </h3>
-                <p class="text-xs text-gray-600 mt-1">Kelola jenis dan detail container untuk order ini</p>
+<div x-data="containerGroupsManager()" class="space-y-6">
+    <section class="bg-white rounded-2xl border border-teal-200/80 shadow-md p-6 relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-teal-600 to-emerald-500"></div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-slate-100 gap-3">
+            <div class="flex items-center gap-3">
+                <div class="size-10 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-sm">
+                    <span class="material-symbols-outlined text-2xl">package_2</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-lg font-bold text-slate-900 tracking-tight font-display">Container Details</h3>
+                        <span class="px-2 py-0.5 bg-teal-100 text-teal-800 text-[11px] font-bold rounded-full"
+                            x-text="totalCargoSummaryBadge()">
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500">Konfigurasi jenis kontainer, tipe box (GP, OT, HC, RF), vendor pengangkut, combo dan combine</p>
+                </div>
             </div>
+
             <button type="button" @click="addGroup()"
-                class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-bold rounded-lg shadow-lg transition-all flex items-center gap-2 hover:shadow-xl">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Tambah Jenis Container
+                class="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-xs transition-all duration-200 hover:shadow">
+                <span class="material-symbols-outlined text-base">add</span>
+                <span>+ Tambah Jenis Container</span>
             </button>
         </div>
 
-        <div class="p-6 space-y-5">
+        <div class="space-y-6">
             <template x-for="(group, groupIndex) in groups" :key="groupIndex">
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-4 border-blue-400 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-shadow">
-                    <!-- Group Header -->
-                    <div class="flex justify-between items-center mb-5 pb-4 border-b-2 border-blue-300">
-                        <h4 class="font-bold text-xl text-blue-900 flex items-center gap-2">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                            </svg>
-                            Container
-                        </h4>
-                        <button type="button" @click="removeGroup(groupIndex)" x-show="groups.length > 1"
-                            class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-lg transition-colors shadow-md hover:shadow-lg flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                            Hapus Jenis Ini
-                        </button>
+                <div class="border border-slate-200 rounded-2xl p-5 bg-slate-50/70 relative transition-all duration-300">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-200">
+                        <div class="flex items-center gap-2">
+                            <span class="size-6 rounded-lg bg-teal-100 text-teal-800 text-xs font-extrabold flex items-center justify-center" x-text="groupIndex + 1"></span>
+                            <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wide" x-text="'Alokasi Grup Kontainer #' + (groupIndex + 1)"></span>
+                        </div>
+                        <div class="flex items-center gap-3 ml-auto">
+                            <button type="button" @click="removeGroup(groupIndex)" x-show="groups.length > 1"
+                                class="inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg transition-colors">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                                <span>Hapus Jenis Ini</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Group Config: Jenis & Jumlah -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
-                        <div class="bg-white p-4 rounded-xl border-2 border-blue-200 shadow-md">
-                            <label class="block text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                </svg>
-                                Jenis Kontainer <span class="text-red-500">*</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-5 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                Jenis Kontainer <span class="text-rose-500">*</span>
                             </label>
                             <select x-model="group.size" @change="updateGroupContainers(groupIndex)" required
                                 :name="'groups['+groupIndex+'][size]'"
-                                class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg bg-white text-gray-900 focus:border-blue-600 focus:ring-4 focus:ring-blue-200 transition-all text-base font-medium">
+                                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all">
                                 <option value="">-- Pilih Jenis --</option>
-                                <option value="20'">📦 20'</option>
-                                <option value="40'">📦 40'</option>
-                                <option value="LCL">📦 LCL</option>
+                                <option value="20'">20' (Twenty Feet)</option>
+                                <option value="40'">40' (Forty Feet)</option>
+                                <option value="LCL">LCL (Less than Container Load)</option>
                             </select>
                         </div>
 
-                        <div class="bg-white p-4 rounded-xl border-2 border-blue-200 shadow-md">
-                            <label class="block text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
-                                </svg>
-                                Jumlah Kontainer <span class="text-red-500">*</span>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                Jumlah Box (Kuantitas) <span class="text-rose-500">*</span>
                             </label>
-                            <input type="number" x-model.number="group.quantity" @input="updateGroupContainers(groupIndex)" min="1" required
-                                :name="'groups['+groupIndex+'][quantity]'"
-                                class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg bg-white text-gray-900 focus:border-blue-600 focus:ring-4 focus:ring-blue-200 transition-all text-base font-medium">
+                            <div class="flex items-center">
+                                <input type="number" x-model.number="group.quantity" @input="updateGroupContainers(groupIndex)" min="1" max="50" required
+                                    :name="'groups['+groupIndex+'][quantity]'"
+                                    :disabled="group.size === 'LCL'"
+                                    :class="group.size === 'LCL' ? 'opacity-40 cursor-not-allowed' : ''"
+                                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all">
+                                <span class="ml-2 text-xs font-semibold text-slate-500">Unit</span>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-2 flex items-center justify-start sm:justify-end text-xs text-slate-500">
+                            <div class="bg-teal-50 text-teal-800 px-3 py-2 rounded-lg border border-teal-100 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-teal-600 text-sm">info</span>
+                                <span x-show="group.size === '40\''">Ukuran 40' ideal untuk komoditas volume besar atau bobot maksimal 28 Ton.</span>
+                                <span x-show="group.size === '20\''">Ukuran 20' cocok untuk kargo padat berat (Heavy Cargo) hingga 24 Ton.</span>
+                                <span x-show="group.size === 'LCL'">Mode kargo konsolidasi LCL aktif.</span>
+                                <span x-show="!group.size">Pilih ukuran kontainer atau LCL untuk melihat detail unit.</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- LCL: Simple Vendor Only -->
-                    <div x-show="group.size === 'LCL'" class="space-y-4">
+                    <!-- LCL Mode Panel -->
+                    <div x-show="group.size === 'LCL'" class="mt-4 p-4 rounded-xl bg-teal-50/80 border border-teal-200 text-teal-900">
                         <template x-for="id in (group.ids || [])" :key="id">
                             <input type="hidden" :name="'groups['+groupIndex+'][ids][]'" :value="id" :disabled="group.size !== 'LCL'">
                         </template>
-                        <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-5">
-                            <label class="block text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                Vendor <span class="text-red-500">*</span>
-                            </label>
-                            <select x-model="group.lclVendor"
-                                :name="'groups['+groupIndex+'][lcl_vendor]'"
-                                :required="group.size === 'LCL'"
-                                class="w-full px-4 py-3 border-2 border-yellow-300 rounded-lg bg-white text-gray-900 focus:border-yellow-500 focus:ring-4 focus:ring-yellow-200 transition-all text-base font-medium">
-                                <option value="">-- Pilih Vendor --</option>
-                                @foreach($vendors as $vendor)
-                                    <option value="{{ $vendor->name }}">{{ $vendor->name }}</option>
-                                @endforeach
-                            </select>
-                            <p class="text-sm text-yellow-800 mt-3 flex items-start gap-2 bg-yellow-100 p-3 rounded-lg">
-                                <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                                </svg>
-                                <span><strong>Info LCL:</strong> Tidak perlu isi No Container, Type Container, Combo & Combine</span>
-                            </p>
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-teal-600 text-xl mt-0.5">inventory</span>
+                            <div class="flex-1">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-teal-900">Mode Muatan LCL Aktif</h4>
+                                <p class="text-xs text-teal-800 mt-0.5 leading-relaxed">
+                                    Hanya perlu memilih vendor pengangkut kargo konsolidasi. Nomor kontainer, tipe box, combo, dan combine tidak diperlukan.
+                                </p>
+                                <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-teal-900 mb-1">Vendor Pengangkut Konsolidasi *</label>
+                                        <select x-model="group.lclVendor"
+                                            :name="'groups['+groupIndex+'][lcl_vendor]'"
+                                            :required="group.size === 'LCL'"
+                                            class="w-full px-2.5 py-1.5 text-xs font-semibold bg-white border border-teal-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                            <option value="">-- Pilih Vendor --</option>
+                                            @foreach($vendors as $vendor)
+                                                <option value="{{ $vendor->name }}">{{ $vendor->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Non-LCL: Detailed Containers -->
-                    <div x-show="group.size !== 'LCL' && group.size !== ''" class="space-y-4">
-                        <div class="border-t-2 border-blue-300 pt-5">
-                            <h5 class="font-bold text-blue-900 mb-4 flex items-center gap-2 text-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                Detail Container (Total: <span x-text="group.containers.length" class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm"></span>)
-                            </h5>
+                    <!-- Non-LCL Containers Unit Cards -->
+                    <div x-show="group.size !== 'LCL' && group.size !== ''" class="space-y-3">
+                        <template x-for="(container, containerIndex) in group.containers" :key="containerIndex">
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="px-2.5 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-700" x-text="'Unit #' + (containerIndex + 1)"></span>
+                                    <div class="size-2 rounded-full bg-emerald-500"></div>
+                                    <span class="text-xs font-bold text-slate-800" x-text="group.size + ' ' + (container.type || 'Standard')"></span>
+                                </div>
 
-                            <template x-for="(container, containerIndex) in group.containers" :key="containerIndex">
-                                <div class="bg-white border-3 border-gray-400 rounded-xl p-5 mb-4 shadow-lg hover:shadow-xl transition-shadow">
-                                    <div class="flex items-center gap-3 mb-4 pb-3 border-b-2 border-gray-200">
-                                        <span class="text-gray-900 font-bold text-base flex items-center gap-2">
-                                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                            </svg>
-                                            Container
-                                        </span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 flex-1">
+                                    <input type="hidden" x-model="container.id" :name="'groups['+groupIndex+'][containers]['+containerIndex+'][id]'">
+
+                                    <!-- Nomor Kontainer -->
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1">No Kontainer *</label>
+                                        <input type="text" x-model="container.number"
+                                            :name="'groups['+groupIndex+'][containers]['+containerIndex+'][number]'"
+                                            :required="group.size !== 'LCL'"
+                                            placeholder="Contoh: MSKU-982140-1"
+                                            class="w-full px-2.5 py-1.5 text-xs font-mono font-bold bg-white border border-slate-200 rounded-lg uppercase focus:ring-2 focus:ring-teal-500 focus:outline-none">
                                     </div>
 
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <!-- No Container -->
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-900 mb-2">
-                                                No Kontainer <span class="text-red-500">*</span>
-                                            </label>
-                                            <input type="hidden" x-model="container.id"
-                                                :name="'groups['+groupIndex+'][containers]['+containerIndex+'][id]'">
-                                            <input type="text" x-model="container.number"
-                                                :name="'groups['+groupIndex+'][containers]['+containerIndex+'][number]'" required
-                                                placeholder="Masukkan nomor container"
-                                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-                                        </div>
+                                    <!-- Tipe Kontainer -->
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Type Kontainer *</label>
+                                        <select x-model="container.type"
+                                            :name="'groups['+groupIndex+'][containers]['+containerIndex+'][type]'"
+                                            :required="group.size !== 'LCL'"
+                                            class="w-full px-2.5 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                            <option value="">-- Pilih --</option>
+                                            <option value="GP">GP - General Purpose</option>
+                                            <option value="OT">OT - Open Top</option>
+                                            <option value="HC">HC - High Cube</option>
+                                            <option value="RF">RF - Reefer</option>
+                                        </select>
+                                    </div>
 
-                                        <!-- Type Container -->
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-900 mb-2">
-                                                Type Kontainer <span class="text-red-500">*</span>
-                                            </label>
-                                            <select x-model="container.type"
-                                                :name="'groups['+groupIndex+'][containers]['+containerIndex+'][type]'" required
-                                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-                                                <option value="">-- Pilih Type --</option>
-                                                <option value="GP">GP - General Purpose</option>
-                                                <option value="OT">OT - Open Top</option>
-                                                <option value="HC">HC - High Cube</option>
-                                                <option value="RF">RF - Reefer</option>
-                                            </select>
-                                        </div>
+                                    <!-- Vendor Pengangkut -->
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Vendor Pengangkut *</label>
+                                        <select x-model="container.vendor"
+                                            :name="'groups['+groupIndex+'][containers]['+containerIndex+'][vendor]'"
+                                            :required="group.size !== 'LCL'"
+                                            class="w-full px-2.5 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                            <option value="">-- Pilih --</option>
+                                            @foreach($vendors as $vendor)
+                                                <option value="{{ $vendor->name }}">{{ $vendor->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                        <!-- Vendor -->
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-900 mb-2">
-                                                Vendor <span class="text-red-500">*</span>
-                                            </label>
-                                            <select x-model="container.vendor"
-                                                :name="'groups['+groupIndex+'][containers]['+containerIndex+'][vendor]'" required
-                                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-                                                <option value="">-- Pilih Vendor --</option>
-                                                @foreach($vendors as $vendor)
-                                                    <option value="{{ $vendor->name }}">{{ $vendor->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                    <!-- Combo Dropdown -->
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Combo</label>
+                                        <select x-model="container.combo"
+                                            :name="'groups['+groupIndex+'][containers]['+containerIndex+'][combo]'"
+                                            class="w-full px-2.5 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                            <option value="">-- Tidak Combo --</option>
+                                            <template x-for="(c, idx) in group.containers" :key="idx">
+                                                <option x-show="idx !== containerIndex && c.type === container.type && c.number"
+                                                    :value="c.number"
+                                                    x-text="'Unit #' + (idx + 1) + ' - ' + c.number">
+                                                </option>
+                                            </template>
+                                        </select>
+                                    </div>
 
-                                        <!-- Combo -->
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-900 mb-2">
-                                                Combo (Opsional)
-                                            </label>
-                                            <select x-model="container.combo"
-                                                :name="'groups['+groupIndex+'][containers]['+containerIndex+'][combo]'"
-                                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-                                                <option value="">-- Tidak Combo --</option>
-                                                <template x-for="(c, idx) in group.containers" :key="idx">
-                                                    <option x-show="idx !== containerIndex && c.type === container.type && c.number"
-                                                        :value="c.number"
-                                                        x-text="'Container #' + (idx + 1) + ' - ' + c.number">
-                                                    </option>
-                                                </template>
-                                            </select>
-                                            <p class="text-xs text-gray-600 mt-1.5 italic">💡 Combo hanya dengan container type sama dalam group ini</p>
-                                        </div>
-
-                                        <!-- Combine -->
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-sm font-bold text-gray-900 mb-2">
-                                                Combine dengan Order Lain (Opsional)
-                                            </label>
-                                            <select x-model="container.combine"
-                                                :name="'groups['+groupIndex+'][containers]['+containerIndex+'][combine]'"
-                                                class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-                                                <option value="">-- Tidak Combine --</option>
-                                                <template x-if="container.combine && !combineCandidates(group, container).some(c => String(c.id) === String(container.combine))">
-                                                    <option :value="container.combine" x-text="'Pilihan tersimpan #' + container.combine"></option>
-                                                </template>
-                                                <template x-for="candidate in combineCandidates(group, container)" :key="candidate.id">
-                                                    <option :value="candidate.id" x-text="candidate.orderNumber + ' - ' + candidate.number"></option>
-                                                </template>
-                                            </select>
-                                            <p class="text-xs text-gray-600 mt-1.5 italic">Hanya order lain yang On Going dengan ukuran, vendor, dan tipe sama.</p>
-                                        </div>
+                                    <!-- Combine Dropdown -->
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Combine</label>
+                                        <select x-model="container.combine"
+                                            :name="'groups['+groupIndex+'][containers]['+containerIndex+'][combine]'"
+                                            class="w-full px-2.5 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                            <option value="">-- Tidak Combine --</option>
+                                            <template x-if="container.combine && !combineCandidates(group, container).some(c => String(c.id) === String(container.combine))">
+                                                <option :value="container.combine" x-text="'Pilihan tersimpan #' + container.combine"></option>
+                                            </template>
+                                            <template x-for="candidate in combineCandidates(group, container)" :key="candidate.id">
+                                                <option :value="candidate.id" x-text="candidate.orderNumber + ' - ' + candidate.number"></option>
+                                            </template>
+                                        </select>
                                     </div>
                                 </div>
-                            </template>
-                        </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </template>
 
-            <p x-show="groups.length === 0" class="text-center text-gray-500 py-12">
-                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                </svg>
-                <span class="text-lg font-semibold">Belum ada container</span><br>
-                <span class="text-sm">Klik tombol "Tambah Jenis Container" di atas untuk memulai</span>
-            </p>
+            <div x-show="groups.length === 0" class="text-center text-slate-500 py-10 bg-slate-50 border border-dashed border-slate-300 rounded-2xl">
+                <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">package_2</span>
+                <p class="text-xs font-bold text-slate-700">Belum ada grup kontainer</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">Klik "+ Tambah Jenis Container" di atas untuk menambahkan kontainer.</p>
+            </div>
         </div>
-    </div>
+    </section>
 </div>
 
 <script>
@@ -233,17 +221,22 @@ function containerGroupsManager() {
         storageKey: 'container_data_{{ $orderType }}_{{ $orderId ?? "create" }}',
 
         init() {
-            // Failed validation takes priority over saved database values and drafts.
             @if(session()->hasOldInput('groups'))
                 this.groups = @js(old('groups', []));
             @elseif($order !== null)
                 this.groups = @js($existingGroups);
             @else
-                try {
-                    this.groups = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-                } catch (e) {
-                    this.groups = [];
-                }
+                // Draft kontainer hanya dipulihkan setelah user memilih "Lanjutkan Draft".
+                this.groups = [];
+                window.addEventListener('order-container-draft-restore', () => {
+                    try {
+                        const saved = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+                        this.groups = Array.isArray(saved) ? saved : Object.values(saved || {});
+                        this.updateFooterCargoSummary();
+                    } catch (e) {
+                        this.groups = [];
+                    }
+                }, { once: true });
             @endif
 
             if (!Array.isArray(this.groups)) this.groups = Object.values(this.groups || {});
@@ -262,57 +255,63 @@ function containerGroupsManager() {
                 @if($order === null)
                     try {
                         localStorage.setItem(this.storageKey, JSON.stringify(value));
-                    } catch (e) {
-                        // Storage may be unavailable; form submission still works.
-                    }
+                    } catch (e) {}
                 @endif
+                this.updateFooterCargoSummary();
             });
+
+            this.updateFooterCargoSummary();
         },
 
         blankGroup() {
             return {
-                size: '',
+                size: "40'",
                 quantity: 1,
                 lclVendor: '',
                 ids: [],
-                containers: []
+                containers: [{
+                    id: '', number: '', type: 'GP', vendor: '', combo: '', combine: ''
+                }]
             };
         },
 
         addGroup() {
-            this.groups.push(this.blankGroup());
+            const group = this.blankGroup();
+            this.groups.push(group);
+            this.updateFooterCargoSummary();
         },
 
         removeGroup(index) {
             this.groups.splice(index, 1);
+            this.updateFooterCargoSummary();
         },
 
         updateGroupContainers(groupIndex) {
             const group = this.groups[groupIndex];
-            const newCount = Math.max(1, parseInt(group.quantity) || 0);
+            const newCount = Math.max(1, parseInt(group.quantity) || 1);
 
             if (group.size === 'LCL') {
                 group.containers = [];
                 const ids = Array.isArray(group.ids) ? group.ids.slice(0, newCount) : [];
                 group.ids = ids.filter(Boolean);
+                this.updateFooterCargoSummary();
                 return;
             }
 
             group.ids = [];
-
             if (!group.size) {
                 group.containers = [];
+                this.updateFooterCargoSummary();
                 return;
             }
 
             const currentCount = group.containers.length;
-
             if (newCount > currentCount) {
                 for (let i = currentCount; i < newCount; i++) {
                     group.containers.push({
                         id: '',
                         number: '',
-                        type: '',
+                        type: 'GP',
                         vendor: '',
                         combo: '',
                         combine: ''
@@ -321,6 +320,7 @@ function containerGroupsManager() {
             } else if (newCount < currentCount) {
                 group.containers = group.containers.slice(0, newCount);
             }
+            this.updateFooterCargoSummary();
         },
 
         combineCandidates(group, container) {
@@ -332,10 +332,49 @@ function containerGroupsManager() {
             );
         },
 
-        clearStorage() {
-            // Method untuk clear localStorage (dipanggil setelah form submit berhasil)
-            localStorage.removeItem(this.storageKey);
+        totalCargoSummaryBadge() {
+            let totalBoxes = 0;
+            let countLcl = 0;
+            this.groups.forEach(g => {
+                if (g.size === 'LCL') {
+                    countLcl++;
+                } else if (g.size) {
+                    totalBoxes += (parseInt(g.quantity) || 1);
+                }
+            });
+            return totalBoxes + ' Unit Box' + (countLcl > 0 ? ' + LCL' : '');
+        },
+
+        updateFooterCargoSummary() {
+            const footerEl = document.getElementById('footerCargoSummary');
+            if (!footerEl) return;
+
+            let totalBoxes = 0;
+            let count40 = 0;
+            let count20 = 0;
+            let countLcl = 0;
+
+            this.groups.forEach(g => {
+                const qty = parseInt(g.quantity) || 1;
+                if (g.size === "40'") {
+                    count40 += qty;
+                    totalBoxes += qty;
+                } else if (g.size === "20'") {
+                    count20 += qty;
+                    totalBoxes += qty;
+                } else if (g.size === 'LCL') {
+                    countLcl += 1;
+                }
+            });
+
+            const parts = [];
+            if (count40 > 0) parts.push(count40 + 'x 40ft');
+            if (count20 > 0) parts.push(count20 + 'x 20ft');
+            if (countLcl > 0) parts.push(countLcl + 'x LCL');
+
+            const desc = parts.length > 0 ? parts.join(', ') : 'Belum ditentukan';
+            footerEl.innerText = 'Total Kargo: ' + totalBoxes + ' Kontainer • ' + desc;
         }
-    }
+    };
 }
 </script>
