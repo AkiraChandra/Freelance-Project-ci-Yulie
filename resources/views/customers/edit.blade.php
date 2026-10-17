@@ -43,8 +43,7 @@
                     <p class="text-sm text-gray-500 mt-0.5">Kode customer tidak dapat diubah</p>
                 </div>
 
-                <form action="{{ route('customers.update', $customer) }}" method="POST" class="p-8 space-y-6"
-                    x-data="{ type: '{{ old('type', $customer->type) }}' }">
+                <form action="{{ route('customers.update', $customer) }}" method="POST" class="p-8 space-y-6">
                     @csrf
                     @method('PATCH')
 
@@ -65,61 +64,13 @@
                             class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all font-medium">
                     </div>
 
-                    <!-- Type -->
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-3">
-                            Tipe Customer <span class="text-red-500">*</span>
-                        </label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <!-- Ekspor -->
-                            <label class="cursor-pointer" @click="type = 'ekspor'">
-                                <input type="radio" name="type" value="ekspor" x-model="type" class="sr-only" required>
-                                <div class="flex items-center gap-3 p-4 border-2 rounded-xl transition-all"
-                                    :class="type === 'ekspor' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300 bg-white'">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0"
-                                        :class="type === 'ekspor' ? 'bg-blue-200 text-blue-700' : 'bg-blue-100 text-blue-600'">E</div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 text-sm">Ekspor</p>
-                                        <p class="text-xs text-gray-500">Pengiriman ke luar negeri</p>
-                                    </div>
-                                    <div class="ml-auto flex-shrink-0">
-                                        <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center"
-                                            :class="type === 'ekspor' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-white" x-show="type === 'ekspor'"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-                            <!-- Impor -->
-                            <label class="cursor-pointer" @click="type = 'impor'">
-                                <input type="radio" name="type" value="impor" x-model="type" class="sr-only">
-                                <div class="flex items-center gap-3 p-4 border-2 rounded-xl transition-all"
-                                    :class="type === 'impor' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-orange-300 bg-white'">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0"
-                                        :class="type === 'impor' ? 'bg-orange-200 text-orange-700' : 'bg-orange-100 text-orange-600'">I</div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 text-sm">Impor</p>
-                                        <p class="text-xs text-gray-500">Pengiriman dari luar negeri</p>
-                                    </div>
-                                    <div class="ml-auto flex-shrink-0">
-                                        <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center"
-                                            :class="type === 'impor' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-white" x-show="type === 'impor'"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
                     <!-- City -->
                     <div>
                         <label for="city" class="block text-sm font-bold text-gray-700 mb-2">
-                            Kota
+                            Kota Operasional
                         </label>
-                        <input type="text" name="city" id="city"
-                            value="{{ old('city', $customer->city) }}"
-                            class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all font-medium">
+                        <x-searchable-city-select :options="$cityOptions" :selected="old('city', $customer->city)" id="city" />
+                        @error('city')<p class="mt-2 text-xs text-red-700">{{ $message }}</p>@enderror
                     </div>
 
                     <!-- Actions -->

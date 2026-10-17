@@ -141,7 +141,7 @@
                 </div>
 
                 {{-- ── CONTAINER DETAILS (NEW) ──────────────────────────────── --}}
-                <x-container-input :order="null" :existingGroups="[]" :vendors="$vendors" :orderId="null" orderType="import" />
+                <x-container-input :order="null" :existingGroups="[]" :vendors="$vendors" :orderId="null" :availableCombineContainers="$availableCombineContainers" orderType="import" />
 
                 {{-- ── DATES (Demurrage, Release, Return) ────────────────────── --}}
                 <div class="bg-slate-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">

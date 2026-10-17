@@ -1,6 +1,6 @@
-@props(['order' => null, 'existingGroups' => [], 'vendors' => [], 'orderId' => null, 'orderType' => 'import'])
+@props(['order' => null, 'existingGroups' => [], 'vendors' => [], 'orderId' => null, 'orderType' => 'import', 'availableCombineContainers' => []])
 
-<div x-data="containerGroupsManager()" x-init="init()">
+<div x-data="containerGroupsManager()">
     <div class="bg-white rounded-2xl shadow-2xl border-2 border-gray-300 overflow-hidden">
         <div class="px-6 py-5 bg-white border-b-2 border-gray-200 flex justify-between items-center">
             <div>
@@ -12,7 +12,7 @@
                 </h3>
                 <p class="text-xs text-gray-600 mt-1">Kelola jenis dan detail container untuk order ini</p>
             </div>
-            <button type="button" @click="addGroup()" 
+            <button type="button" @click="addGroup()"
                 class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-bold rounded-lg shadow-lg transition-all flex items-center gap-2 hover:shadow-xl">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -20,7 +20,7 @@
                 Tambah Jenis Container
             </button>
         </div>
-        
+
         <div class="p-6 space-y-5">
             <template x-for="(group, groupIndex) in groups" :key="groupIndex">
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-4 border-blue-400 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-shadow">
@@ -75,6 +75,9 @@
 
                     <!-- LCL: Simple Vendor Only -->
                     <div x-show="group.size === 'LCL'" class="space-y-4">
+                        <template x-for="id in (group.ids || [])" :key="id">
+                            <input type="hidden" :name="'groups['+groupIndex+'][ids][]'" :value="id" :disabled="group.size !== 'LCL'">
+                        </template>
                         <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-5">
                             <label class="block text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +85,7 @@
                                 </svg>
                                 Vendor <span class="text-red-500">*</span>
                             </label>
-                            <select x-model="group.lclVendor" 
+                            <select x-model="group.lclVendor"
                                 :name="'groups['+groupIndex+'][lcl_vendor]'"
                                 :required="group.size === 'LCL'"
                                 class="w-full px-4 py-3 border-2 border-yellow-300 rounded-lg bg-white text-gray-900 focus:border-yellow-500 focus:ring-4 focus:ring-yellow-200 transition-all text-base font-medium">
@@ -109,7 +112,7 @@
                                 </svg>
                                 Detail Container (Total: <span x-text="group.containers.length" class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm"></span>)
                             </h5>
-                            
+
                             <template x-for="(container, containerIndex) in group.containers" :key="containerIndex">
                                 <div class="bg-white border-3 border-gray-400 rounded-xl p-5 mb-4 shadow-lg hover:shadow-xl transition-shadow">
                                     <div class="flex items-center gap-3 mb-4 pb-3 border-b-2 border-gray-200">
@@ -120,14 +123,16 @@
                                             Container
                                         </span>
                                     </div>
-                                    
+
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <!-- No Container -->
                                         <div>
                                             <label class="block text-sm font-bold text-gray-900 mb-2">
                                                 No Kontainer <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="text" x-model="container.number" 
+                                            <input type="hidden" x-model="container.id"
+                                                :name="'groups['+groupIndex+'][containers]['+containerIndex+'][id]'">
+                                            <input type="text" x-model="container.number"
                                                 :name="'groups['+groupIndex+'][containers]['+containerIndex+'][number]'" required
                                                 placeholder="Masukkan nomor container"
                                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
@@ -138,7 +143,7 @@
                                             <label class="block text-sm font-bold text-gray-900 mb-2">
                                                 Type Kontainer <span class="text-red-500">*</span>
                                             </label>
-                                            <select x-model="container.type" 
+                                            <select x-model="container.type"
                                                 :name="'groups['+groupIndex+'][containers]['+containerIndex+'][type]'" required
                                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
                                                 <option value="">-- Pilih Type --</option>
@@ -154,7 +159,7 @@
                                             <label class="block text-sm font-bold text-gray-900 mb-2">
                                                 Vendor <span class="text-red-500">*</span>
                                             </label>
-                                            <select x-model="container.vendor" 
+                                            <select x-model="container.vendor"
                                                 :name="'groups['+groupIndex+'][containers]['+containerIndex+'][vendor]'" required
                                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
                                                 <option value="">-- Pilih Vendor --</option>
@@ -169,7 +174,7 @@
                                             <label class="block text-sm font-bold text-gray-900 mb-2">
                                                 Combo (Opsional)
                                             </label>
-                                            <select x-model="container.combo" 
+                                            <select x-model="container.combo"
                                                 :name="'groups['+groupIndex+'][containers]['+containerIndex+'][combo]'"
                                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
                                                 <option value="">-- Tidak Combo --</option>
@@ -192,14 +197,14 @@
                                                 :name="'groups['+groupIndex+'][containers]['+containerIndex+'][combine]'"
                                                 class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
                                                 <option value="">-- Tidak Combine --</option>
-                                                <template x-for="(c, idx) in group.containers" :key="idx">
-                                                    <option x-show="idx !== containerIndex && c.type === container.type && c.number"
-                                                        :value="c.number"
-                                                        x-text="'Container #' + (idx + 1) + ' - ' + c.number">
-                                                    </option>
+                                                <template x-if="container.combine && !combineCandidates(group, container).some(c => String(c.id) === String(container.combine))">
+                                                    <option :value="container.combine" x-text="'Pilihan tersimpan #' + container.combine"></option>
+                                                </template>
+                                                <template x-for="candidate in combineCandidates(group, container)" :key="candidate.id">
+                                                    <option :value="candidate.id" x-text="candidate.orderNumber + ' - ' + candidate.number"></option>
                                                 </template>
                                             </select>
-                                            <p class="text-xs text-gray-600 mt-1.5 italic">🔗 Hanya order <strong>ON GOING</strong> dengan container size, vendor & type yang sama</p>
+                                            <p class="text-xs text-gray-600 mt-1.5 italic">Hanya order lain yang On Going dengan ukuran, vendor, dan tipe sama.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -224,76 +229,88 @@
 function containerGroupsManager() {
     return {
         groups: [],
-        storageKey: 'container_data_{{ $orderId ?? "create" }}',
-        
-        init() {
-            @if(isset($existingGroups) && count($existingGroups) > 0)
-                // Editing existing order - use server data and clear stale cached form data from previous attempts
-                this.groups = @json($existingGroups);
-                localStorage.removeItem(this.storageKey);
-            @else
-                // Try to load from localStorage first
-                const savedData = localStorage.getItem(this.storageKey);
+        availableCombineContainers: @js($availableCombineContainers),
+        storageKey: 'container_data_{{ $orderType }}_{{ $orderId ?? "create" }}',
 
-                if (savedData) {
-                    // Load dari localStorage jika ada (user pernah isi sebelum refresh)
-                    try {
-                        this.groups = JSON.parse(savedData);
-                    } catch (e) {
-                        // Kalau error parsing, set default 1 group
-                        this.groups = [{
-                            size: '',
-                            quantity: 1,
-                            lclVendor: '',
-                            containers: []
-                        }];
-                    }
-                } else {
-                    // Default: 1 group kosong
-                    this.groups = [{
-                        size: '',
-                        quantity: 1,
-                        lclVendor: '',
-                        containers: []
-                    }];
+        init() {
+            // Failed validation takes priority over saved database values and drafts.
+            @if(session()->hasOldInput('groups'))
+                this.groups = @js(old('groups', []));
+            @elseif($order !== null)
+                this.groups = @js($existingGroups);
+            @else
+                try {
+                    this.groups = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+                } catch (e) {
+                    this.groups = [];
                 }
             @endif
-            
-            // Auto-save ke localStorage setiap kali data berubah
+
+            if (!Array.isArray(this.groups)) this.groups = Object.values(this.groups || {});
+            this.groups = this.groups.filter(group => group && typeof group === 'object').map(group => ({
+                ...this.blankGroup(),
+                ...group,
+                lclVendor: group.lcl_vendor ?? group.lclVendor ?? '',
+                ids: Array.isArray(group.ids) ? group.ids.filter(Boolean) : [],
+                containers: Object.values(group.containers || {}).map(container => ({
+                    id: '', number: '', type: '', vendor: '', combo: '', combine: '', ...container
+                }))
+            }));
+            if (this.groups.length === 0) this.groups = [this.blankGroup()];
+
             this.$watch('groups', (value) => {
-                if (!this.storageKey || this.storageKey.includes('create')) {
-                    localStorage.setItem(this.storageKey, JSON.stringify(value));
-                }
+                @if($order === null)
+                    try {
+                        localStorage.setItem(this.storageKey, JSON.stringify(value));
+                    } catch (e) {
+                        // Storage may be unavailable; form submission still works.
+                    }
+                @endif
             });
         },
-        
-        addGroup() {
-            this.groups.push({
+
+        blankGroup() {
+            return {
                 size: '',
                 quantity: 1,
                 lclVendor: '',
+                ids: [],
                 containers: []
-            });
+            };
         },
-        
+
+        addGroup() {
+            this.groups.push(this.blankGroup());
+        },
+
         removeGroup(index) {
             this.groups.splice(index, 1);
         },
-        
+
         updateGroupContainers(groupIndex) {
             const group = this.groups[groupIndex];
-            
-            if (group.size === 'LCL' || !group.size) {
+            const newCount = Math.max(1, parseInt(group.quantity) || 0);
+
+            if (group.size === 'LCL') {
+                group.containers = [];
+                const ids = Array.isArray(group.ids) ? group.ids.slice(0, newCount) : [];
+                group.ids = ids.filter(Boolean);
+                return;
+            }
+
+            group.ids = [];
+
+            if (!group.size) {
                 group.containers = [];
                 return;
             }
-            
-            const newCount = parseInt(group.quantity) || 0;
+
             const currentCount = group.containers.length;
-            
+
             if (newCount > currentCount) {
                 for (let i = currentCount; i < newCount; i++) {
                     group.containers.push({
+                        id: '',
                         number: '',
                         type: '',
                         vendor: '',
@@ -305,7 +322,16 @@ function containerGroupsManager() {
                 group.containers = group.containers.slice(0, newCount);
             }
         },
-        
+
+        combineCandidates(group, container) {
+            if (!group.size || !container.type || !container.vendor) return [];
+            return this.availableCombineContainers.filter(c =>
+                c.size === group.size &&
+                c.type === container.type &&
+                c.vendor === container.vendor
+            );
+        },
+
         clearStorage() {
             // Method untuk clear localStorage (dipanggil setelah form submit berhasil)
             localStorage.removeItem(this.storageKey);

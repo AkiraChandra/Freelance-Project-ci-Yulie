@@ -22,7 +22,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl font-bold text-white">Customer</h1>
-                        <p class="text-slate-300 text-sm mt-1">Kelola daftar customer ekspor dan impor</p>
+                        <p class="text-slate-300 text-sm mt-1">Satu customer untuk order impor dan ekspor</p>
                     </div>
                     <a href="{{ route('customers.create') }}"
                         class="inline-flex items-center px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-colors">
@@ -38,7 +38,7 @@
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                         </svg>
-                        <input type="text" x-model="search" placeholder="Cari nama atau kode customer..."
+                        <input type="text" x-model="search" placeholder="Cari nama, kode, atau kota..."
                             class="w-full pl-9 pr-4 py-2.5 border border-white/20 rounded-xl bg-white/10 text-white placeholder-slate-400 text-sm focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all">
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                                 <tr>
                                     <th class="px-6 py-4 font-semibold text-gray-600">Kode</th>
                                     <th class="px-6 py-4 font-semibold text-gray-600">Nama Customer</th>
-                                    <th class="px-6 py-4 font-semibold text-gray-600">Tipe</th>
+                                    <th class="px-6 py-4 font-semibold text-gray-600">Kota</th>
                                     <th class="px-6 py-4 font-semibold text-gray-600">Didaftarkan Oleh</th>
                                     <th class="px-6 py-4 font-semibold text-gray-600">Tanggal</th>
                                     <th class="px-6 py-4 font-semibold text-gray-600 text-center">Aksi</th>
@@ -70,7 +70,7 @@
                             <tbody class="divide-y divide-gray-100">
                                 @foreach ($customers as $customer)
                                     <tr class="hover:bg-teal-50/50 transition-colors"
-                                        x-show="search === '' || '{{ strtolower($customer->customer_name) }}'.includes(search.toLowerCase()) || '{{ strtolower($customer->customer_code) }}'.includes(search.toLowerCase()) || '{{ strtolower($customer->type) }}'.includes(search.toLowerCase())">
+                                        x-show="search === '' || {{ Js::from(mb_strtolower(implode(' ', [$customer->customer_name, $customer->customer_code, $customer->city ?: 'MEDAN']))) }}.includes(search.toLowerCase())">
                                         <td class="px-6 py-4">
                                             <span class="font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg text-xs">
                                                 {{ $customer->customer_code }}
@@ -78,15 +78,13 @@
                                         </td>
                                         <td class="px-6 py-4 font-semibold text-gray-900">{{ $customer->customer_name }}</td>
                                         <td class="px-6 py-4">
-                                            @if ($customer->type === 'ekspor')
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                                                    Ekspor
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
-                                                    Impor
-                                                </span>
-                                            @endif
+                                            <span class="inline-flex items-center gap-1 text-gray-700 font-medium">
+                                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                                                    <circle cx="12" cy="10" r="2.5" stroke-width="2" />
+                                                </svg>
+                                                {{ $customer->city ?: 'MEDAN' }}
+                                            </span>
                                         </td>
                                         <td class="px-6 py-4 text-gray-600">{{ $customer->creator?->name ?? '-' }}</td>
                                         <td class="px-6 py-4 text-gray-500 text-xs">{{ $customer->created_at->format('d M Y') }}</td>

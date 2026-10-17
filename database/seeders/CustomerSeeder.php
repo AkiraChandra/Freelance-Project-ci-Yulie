@@ -21,14 +21,12 @@ class CustomerSeeder extends Seeder
             [
                 'customer_code' => '26161',
                 'customer_name' => 'PT Maju Bersama',
-                'type' => 'ekspor',
                 'city' => 'MEDAN',
                 'created_by' => $owner->id,
             ],
             [
                 'customer_code' => '89186',
                 'customer_name' => 'PT Maju Bersamas',
-                'type' => 'impor',
                 'city' => 'MEDAN',
                 'created_by' => $owner->id,
             ],
@@ -36,28 +34,24 @@ class CustomerSeeder extends Seeder
             [
                 'customer_code' => 'C0001',
                 'customer_name' => 'PT Petrokimia Gresik',
-                'type' => 'impor',
                 'city' => 'Gresik',
                 'created_by' => $owner->id,
             ],
             [
                 'customer_code' => 'C0002',
                 'customer_name' => 'PT Pupuk Kalimantan Timur',
-                'type' => 'impor',
                 'city' => 'Bontang',
                 'created_by' => $owner->id,
             ],
             [
                 'customer_code' => 'C0006',
                 'customer_name' => 'PT Astra International',
-                'type' => 'ekspor',
                 'city' => 'Jakarta',
                 'created_by' => $owner->id,
             ],
             [
                 'customer_code' => 'C0007',
                 'customer_name' => 'PT Salim Ivomas Pratama',
-                'type' => 'ekspor',
                 'city' => 'Jakarta',
                 'created_by' => $owner->id,
             ],

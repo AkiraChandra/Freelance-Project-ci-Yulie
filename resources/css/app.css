@@ -1,3 +1,60 @@
+@import 'tom-select/dist/css/tom-select.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.city-select .ts-control {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    color: #0b1c30;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: none;
+}
+.city-select .ts-wrapper.focus .ts-control {
+    border-color: #0f766e;
+    box-shadow: 0 0 0 2px rgb(15 118 110 / 15%);
+}
+.city-select .ts-control input {
+    min-height: 22px;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    box-shadow: none !important;
+}
+.city-select .ts-dropdown {
+    z-index: 50;
+    overflow: hidden;
+    margin-top: 5px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    font-size: 14px;
+    box-shadow: 0 12px 32px -4px rgb(12 29 63 / 12%);
+}
+.city-select .ts-dropdown .option,
+.city-select .ts-dropdown .create,
+.city-select .ts-dropdown .no-results {
+    padding: 10px 14px;
+}
+.city-select .ts-dropdown .active {
+    background: #f0fdfa;
+    color: #115e59;
+}
+.city-select .ts-dropdown-content { max-height: 240px; }
+.city-select .ts-wrapper.single .ts-control { padding-right: 36px; }
+.city-select .ts-wrapper.single .ts-control::after {
+    position: absolute;
+    right: 14px;
+    top: 18px;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #64748b;
+    border-bottom: 2px solid #64748b;
+    content: '';
+    transform: rotate(45deg);
+}
